@@ -43,13 +43,10 @@ class OpenFtth:
             application at run time.
         :type iface: QgsInterface
         """
-        # Save reference to the QGIS interface
         self.iface = iface
 
-        # initialize plugin directory
         self.plugin_dir = os.path.dirname(__file__)
 
-        # initialize locale
         locale = QSettings().value('locale/userLocale')[0:2]
         locale_path = os.path.join(
             self.plugin_dir,
@@ -61,14 +58,10 @@ class OpenFtth:
             self.translator.load(locale_path)
             QCoreApplication.installTranslator(self.translator)
 
-        # Declare instance attributes
         self.actions = []
         self.menu = self.tr(u'&Open Ftth')
-        # TODO: We are going to let the user set this up in a future iteration
         self.toolbar = self.iface.addToolBar(u'OpenFtth')
         self.toolbar.setObjectName(u'OpenFtth')
-
-        #print "** INITIALIZING OpenFtth"
 
         self.pluginIsActive = False
         self.dockwidget = None
@@ -179,9 +172,6 @@ class OpenFtth:
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
 
-        #print "** CLOSING OpenFtth"
-
-        # disconnects
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
 
         # remove this statement if dockwidget is to remain
@@ -196,14 +186,11 @@ class OpenFtth:
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
 
-        #print "** UNLOAD OpenFtth"
-
         for action in self.actions:
             self.iface.removePluginMenu(
                 self.tr(u'&Open Ftth'),
                 action)
             self.iface.removeToolBarIcon(action)
-        # remove the toolbar
         del self.toolbar
 
     #--------------------------------------------------------------------------
@@ -214,8 +201,6 @@ class OpenFtth:
         if not self.pluginIsActive:
             self.pluginIsActive = True
 
-            #print "** STARTING OpenFtth"
-
             # dockwidget may not exist if:
             #    first run of plugin
             #    removed on close (see self.onClosePlugin method)
@@ -223,10 +208,7 @@ class OpenFtth:
                 # Create the dockwidget (after translation) and keep reference
                 self.dockwidget = OpenFtthDockWidget()
 
-            # connect to provide cleanup on closing of dockwidget
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
 
-            # show the dockwidget
-            # TODO: fix to allow choice of dock location
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
