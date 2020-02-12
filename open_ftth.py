@@ -21,10 +21,9 @@
  *                                                                         *
  ***************************************************************************/
 """
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QUrl
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
-# Initialize Qt resources from file resources.py
 from .resources import *
 
 # Import the code for the DockWidget
@@ -198,6 +197,10 @@ class OpenFtth:
                 self.dockwidget = OpenFtthDockWidget()
 
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
-
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
+            self.loadUrl('https://dr.dk')
+
+
+    def loadUrl(self, url):
+        self.dockwidget.webView.setUrl(QUrl((url)))
