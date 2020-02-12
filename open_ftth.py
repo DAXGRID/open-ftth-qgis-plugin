@@ -25,6 +25,7 @@ from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QUrl
 from qgis.PyQt.QtGui import QIcon
 from qgis.PyQt.QtWidgets import QAction
 from .resources import *
+from .quick_edit_map_tool import QuickEditMapTool
 
 # Import the code for the DockWidget
 from .open_ftth_dockwidget import OpenFtthDockWidget
@@ -43,6 +44,8 @@ class OpenFtth:
         :type iface: QgsInterface
         """
         self.iface = iface
+        self.map_canvas = iface.mapCanvas()
+        self.map_tool = QuickEditMapTool(self.map_canvas)
 
         self.plugin_dir = os.path.dirname(__file__)
 
@@ -200,6 +203,12 @@ class OpenFtth:
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
 
+            self.map_canvas.setMapTool(self.map_tool)
+            self.map_tool.identified.connect(self.onIdentified)
+
 
     def loadUrl(self, url):
         self.dockwidget.webView.setUrl(QUrl((url)))
+
+    def onIdentified(self, selected_layer, selected_features):
+        print(selected_features.attribute('Id'))
