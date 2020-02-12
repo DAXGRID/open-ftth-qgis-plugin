@@ -199,7 +199,6 @@ class OpenFtth:
             self.dockwidget.closingPlugin.connect(self.onClosePlugin)
             self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
             self.dockwidget.show()
-            self.loadUrl('https://dr.dk')
 
 
     def loadUrl(self, url):
