@@ -173,13 +173,6 @@ class OpenFtth:
         """Cleanup necessary items here when plugin dockwidget is closed"""
 
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
-
-        # remove this statement if dockwidget is to remain
-        # for reuse if plugin is reopened
-        # Commented next statement since it causes QGIS crashe
-        # when closing the docked window:
-        # self.dockwidget = None
-
         self.pluginIsActive = False
 
 
