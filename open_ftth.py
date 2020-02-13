@@ -109,7 +109,7 @@ class OpenFtth:
         self.map_tool.identified.disconnect(self.onIdentified)
         self.map_canvas.setSelectionColor(QColor('red'))
         self.iface.activeLayer().removeSelection()
-
+        self.open_ftth_action.setChecked(False)
 
     def unload(self):
         """Removes the plugin menu item and icon from QGIS GUI."""
@@ -119,6 +119,8 @@ class OpenFtth:
                 self.tr(u'&Open Ftth'),
                 action)
             self.iface.removeToolBarIcon(action)
+
+        self.open_ftth_action.setChecked(False)
 
     def run(self):
         """Run method that loads and starts the plugin"""
