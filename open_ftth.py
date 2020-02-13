@@ -21,6 +21,7 @@
  *                                                                         *
  ***************************************************************************/
 """
+from PyQt5 import QtWidgets, QtGui, QtWidgets
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QUrl
 from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.PyQt.QtWidgets import QAction
@@ -61,9 +62,16 @@ class OpenFtth:
             QCoreApplication.installTranslator(self.translator)
 
         self.actions = []
-        self.menu = self.tr(u'&Open Ftth')
-        self.toolbar = self.iface.addToolBar(u'OpenFtth')
-        self.toolbar.setObjectName(u'OpenFtth')
+        
+        icon_path = ':/plugins/open_ftth/icon.png'
+        self.open_ftth_action = QtWidgets.QAction(QtGui.QIcon(icon_path), "Open Ftth", self.iface.mainWindow())
+        self.open_ftth_action.setCheckable(True)
+        self.open_ftth_action.triggered.connect(self.run)
+        self.open_ftth_action.setCheckable(True)
+
+        self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
+        self.action_group.setExclusive(True)
+        self.action_group.addAction(self.open_ftth_action)
 
         self.pluginIsActive = False
         self.dockwidget = None
@@ -85,91 +93,13 @@ class OpenFtth:
         return QCoreApplication.translate('OpenFtth', message)
 
 
-    def add_action(
-        self,
-        icon_path,
-        text,
-        callback,
-        enabled_flag=True,
-        add_to_menu=True,
-        add_to_toolbar=True,
-        status_tip=None,
-        whats_this=None,
-        parent=None):
-        """Add a toolbar icon to the toolbar.
-
-        :param icon_path: Path to the icon for this action. Can be a resource
-            path (e.g. ':/plugins/foo/bar.png') or a normal file system path.
-        :type icon_path: str
-
-        :param text: Text that should be shown in menu items for this action.
-        :type text: str
-
-        :param callback: Function to be called when the action is triggered.
-        :type callback: function
-
-        :param enabled_flag: A flag indicating if the action should be enabled
-            by default. Defaults to True.
-        :type enabled_flag: bool
-
-        :param add_to_menu: Flag indicating whether the action should also
-            be added to the menu. Defaults to True.
-        :type add_to_menu: bool
-
-        :param add_to_toolbar: Flag indicating whether the action should also
-            be added to the toolbar. Defaults to True.
-        :type add_to_toolbar: bool
-
-        :param status_tip: Optional text to show in a popup when mouse pointer
-            hovers over the action.
-        :type status_tip: str
-
-        :param parent: Parent widget for the new action. Defaults None.
-        :type parent: QWidget
-
-        :param whats_this: Optional text to show in the status bar when the
-            mouse pointer hovers over the action.
-
-        :returns: The action that was created. Note that the action is also
-            added to self.actions list.
-        :rtype: QAction
-        """
-
-        icon = QIcon(icon_path)
-        action = QAction(icon, text, parent)
-        action.triggered.connect(callback)
-        action.setEnabled(enabled_flag)
-
-        if status_tip is not None:
-            action.setStatusTip(status_tip)
-
-        if whats_this is not None:
-            action.setWhatsThis(whats_this)
-
-        if add_to_toolbar:
-            self.toolbar.addAction(action)
-
-        if add_to_menu:
-            self.iface.addPluginToMenu(
-                self.menu,
-                action)
-
-        self.actions.append(action)
-
-        return action
-
-
     def initGui(self):
         """Create the menu entries and toolbar icons inside the QGIS GUI."""
 
-        icon_path = ':/plugins/open_ftth/icon.png'
-        self.add_action(
-            icon_path,
-            text=self.tr(u'Open Ftth'),
-            callback=self.run,
-            parent=self.iface.mainWindow())
+        self.actions.append(self.open_ftth_action)
+        self.iface.addPluginToMenu("&Open Ftth", self.open_ftth_action)
+        self.iface.addToolBarIcon(self.open_ftth_action)
 
-    #--------------------------------------------------------------------------
 
     def onClosePlugin(self):
         """Cleanup necessary items here when plugin dockwidget is closed"""
@@ -189,9 +119,6 @@ class OpenFtth:
                 self.tr(u'&Open Ftth'),
                 action)
             self.iface.removeToolBarIcon(action)
-        del self.toolbar
-
-    #--------------------------------------------------------------------------
 
     def run(self):
         """Run method that loads and starts the plugin"""
@@ -218,4 +145,3 @@ class OpenFtth:
         selected_layer.removeSelection()
         selected_feature_id = selected_feature.attribute('Id')
         selected_layer.select(selected_feature.id())
-
