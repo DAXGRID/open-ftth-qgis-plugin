@@ -176,6 +176,7 @@ class OpenFtth:
 
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
         self.pluginIsActive = False
+        self.map_tool.identified.disconnect(self.onIdentified)
 
 
     def unload(self):
