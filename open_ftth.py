@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QUrl
-from qgis.PyQt.QtGui import QIcon
+from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.PyQt.QtWidgets import QAction
 from .resources import *
 from .quick_edit_map_tool import QuickEditMapTool
@@ -177,6 +177,8 @@ class OpenFtth:
         self.dockwidget.closingPlugin.disconnect(self.onClosePlugin)
         self.pluginIsActive = False
         self.map_tool.identified.disconnect(self.onIdentified)
+        self.map_canvas.setSelectionColor(QColor('red'))
+        self.iface.activeLayer().removeSelection()
 
 
     def unload(self):
@@ -206,10 +208,14 @@ class OpenFtth:
 
             self.map_canvas.setMapTool(self.map_tool)
             self.map_tool.identified.connect(self.onIdentified)
+            self.map_canvas.setSelectionColor(QColor('green'))
 
 
     def loadUrl(self, url):
         self.dockwidget.webView.setUrl(QUrl((url)))
 
-    def onIdentified(self, selected_layer, selected_features):
-        print(selected_features.attribute('Id'))
+    def onIdentified(self, selected_layer, selected_feature):
+        selected_layer.removeSelection()
+        selected_feature_id = selected_feature.attribute('Id')
+        selected_layer.select(selected_feature.id())
+
