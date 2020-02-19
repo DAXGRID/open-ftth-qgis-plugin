@@ -11,7 +11,7 @@ stages:
   - job: PythonBuildAndPublishArtifact
     pool:
       vmImage: 'ubuntu-latest'
-    displayName: 'Open FTTH package and publish artifact'
+    displayName: 'Open FTTH package compile and test'
 
     steps:
     - task: UsePythonVersion@0
