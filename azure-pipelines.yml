@@ -1,0 +1,30 @@
+trigger:
+- master
+
+variables:
+  python_version: '3.7'
+
+stages:
+- stage: Build
+  displayName: Build Stage
+  jobs:
+  - job: PythonBuildAndPublishArtifact
+    pool: 'ubuntu-latest'
+    displayName: 'Open FTTH package and publish artifact'
+
+    steps:
+    - task: UsePythonVersion@0
+      inputs:
+        versionSpec: python_version
+      displayName: 'Use Python version 3.7'
+
+    - script: python -m pip install --upgrade pip
+      displayName: 'Install pip'
+
+    - script: |
+        pip install pb_tool
+        pip install pytqt5
+      displayName: 'Install plugin dependencies'
+
+    - script: pb_tool compile
+      displayName: 'Compile with pb_tool'
