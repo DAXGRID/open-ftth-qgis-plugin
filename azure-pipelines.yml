@@ -9,7 +9,8 @@ stages:
   displayName: Build Stage
   jobs:
   - job: PythonBuildAndPublishArtifact
-    pool: 'Ubuntu-18.04'
+    pool:
+      vmImage: 'ubuntu-latest'
     displayName: 'Open FTTH package and publish artifact'
 
     steps:
