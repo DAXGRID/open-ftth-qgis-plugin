@@ -17,7 +17,7 @@ stages:
     - task: UsePythonVersion@0
       inputs:
         versionSpec: $(python_version)
-      displayName: 'Use Python version {}'
+      displayName: 'Use Python version $(python_version)'
     - script: python -m pip install --upgrade pip
       displayName: 'Install pip'
 
