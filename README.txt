@@ -1,32 +1,21 @@
-Plugin Builder Results
+# Open Ftth - QGIS Plugin
 
-Your plugin OpenFtth was created in:
-    /home/notation/Projects/open-ftth-qgis-plugin/open_ftth
+Open Ftth Plugin for QGIS
 
-Your QGIS plugin directory is located at:
-    /home/notation/.local/share/QGIS/QGIS3/profiles/default/python/plugins
+## Build status
+[![Build Status](https://dev.azure.com/openftth/open-ftth/_apis/build/status/DAXGRID.open-ftth-qgis-plugin?branchName=master)](https://dev.azure.com/openftth/open-ftth/_build/latest?definitionId=1&branchName=master)
 
-What's Next:
+## Dependencies
 
-  * Copy the entire directory containing your new plugin to the QGIS plugin
-    directory
+```bash
+pip install pyqt5
+pip install pb_tool
+```
 
-  * Compile the resources file using pyrcc5
+## Compile
 
-  * Run the tests (``make test``)
+```bash
+pb_tool compile
+```
 
-  * Test the plugin by enabling it in the QGIS plugin manager
-
-  * Customize it by editing the implementation file: ``open_ftth.py``
-
-  * Create your own custom icon, replacing the default icon.png
-
-  * Modify your user interface by opening OpenFtth_dockwidget_base.ui in Qt Designer
-
-  * You can use the Makefile to compile your Ui and resource files when
-    you make changes. This requires GNU make (gmake)
-
-For more information, see the PyQGIS Developer Cookbook at:
-http://www.qgis.org/pyqgis-cookbook/index.html
-
-(C) 2011-2018 GeoApt LLC - geoapt.com
+Install by copying the entire directory to /{myhomepath}/.local/share/QGIS/QGIS3/profiles/default/python/plugins

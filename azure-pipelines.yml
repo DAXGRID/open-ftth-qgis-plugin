@@ -8,7 +8,7 @@ stages:
 - stage: Build
   displayName: Build Stage
   jobs:
-  - job: PythonBuildAndPublishArtifact
+  - job: PythonBuildAndTest
     pool:
       vmImage: 'ubuntu-latest'
     displayName: 'Open FTTH package compile and test'
