@@ -18,4 +18,9 @@ pip install pb_tool
 pb_tool compile
 ```
 
-Install by copying the entire directory to /{myhomepath}/.local/share/QGIS/QGIS3/profiles/default/python/plugins
+## Install
+
+Install by copying the entire directory to:
+```
+/{myhomepath}/.local/share/QGIS/QGIS3/profiles/default/python/plugins
+```
