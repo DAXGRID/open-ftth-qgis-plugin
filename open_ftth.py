@@ -22,7 +22,7 @@
  ***************************************************************************/
 """
 from PyQt5 import QtWidgets, QtGui, QtWidgets
-from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QUrl
+from qgis.PyQt.QtCore import QSettings, QTranslator, QCoreApplication, Qt, QUrl 
 from qgis.PyQt.QtGui import QIcon, QColor
 from qgis.PyQt.QtWidgets import QAction
 from .resources import *
