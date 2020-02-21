@@ -22,17 +22,17 @@ stages:
       displayName: 'Install pip'
 
     - script: |
-        pip install pb_tool
-        pip install pyqt5
+        pip install pb_tool pyqt5
       displayName: 'Install plugin dependencies'
 
     - script: |
-        pip install nose nosetests-json-extended
+        pip install nose nosetests-json-extended python-coverage
       displayName: 'Install testing dependencies'
 
     - script: |
         sudo apt-get install qgis
-      displayName: 'Install QGIS dependency'
+        sudo apt-get install python-qt5
+      displayName: 'Install QGIS dependencies'
 
     - script: |
         source ./scripts/run-env-linux.sh /usr/share/qgis
