@@ -31,7 +31,7 @@ stages:
       displayName: 'Install testing dependencies'
 
     - script: |
-        apt-get install qgis
+        sudo apt-get install qgis
       displayName: 'Install QGIS dependency'
 
     - script: |
