@@ -28,3 +28,9 @@ stages:
 
     - script: pb_tool compile
       displayName: 'Compile with pb_tool'
+
+    - script: pip install nose nosetests-json-extended
+      displayName: 'Install testing dependencies'
+
+    - script: make test
+      displayName: 'Run tests'
