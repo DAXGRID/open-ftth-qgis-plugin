@@ -26,11 +26,21 @@ stages:
         pip install pyqt5
       displayName: 'Install plugin dependencies'
 
-    - script: pb_tool compile
-      displayName: 'Compile with pb_tool'
-
-    - script: pip install nose nosetests-json-extended
+    - script: |
+        pip install nose nosetests-json-extended
       displayName: 'Install testing dependencies'
 
+    - script: |
+        apt-get install qgis
+      displayName: 'Install QGIS dependency'
+
+    - script: |
+        source ./scripts/run-env-linux /usr/bin/qgis
+      displayName: 'Source run-env-linx script enable testing'
+    
+    - script: pb_tool compile
+      displayName: 'Compile with pb_tool'
+    
+   
     - script: make test
       displayName: 'Run tests'
