@@ -31,7 +31,7 @@ stages:
 
     - script: |
         sudo apt-get install qgis
-        sudo apt-get install python-qt5
+        sudo apt-get install python3-pyqt5 
       displayName: 'Install QGIS dependencies'
 
     - script: |
