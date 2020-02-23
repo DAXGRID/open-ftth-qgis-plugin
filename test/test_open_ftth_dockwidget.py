@@ -14,11 +14,10 @@ __copyright__ = 'Copyright 2020, DAX ApS'
 
 import unittest
 
-from qgis.PyQt.QtGui import QDockWidget
+from qgis.PyQt.QtWidgets import QDockWidget
 
+from .utilities import get_qgis_app
 from open_ftth_dockwidget import OpenFtthDockWidget
-
-from utilities import get_qgis_app
 
 QGIS_APP = get_qgis_app()
 

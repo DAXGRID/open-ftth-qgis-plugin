@@ -1,28 +1,3 @@
-# coding=utf-8
-"""QGIS plugin implementation.
-
-.. note:: This program is free software; you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation; either version 2 of the License, or
-     (at your option) any later version.
-
-.. note:: This source code was copied from the 'postgis viewer' application
-     with original authors:
-     Copyright (c) 2010 by Ivan Mincik, ivan.mincik@gista.sk
-     Copyright (c) 2011 German Carrillo, geotux_tuxman@linuxmail.org
-     Copyright (c) 2014 Tim Sutton, tim@linfiniti.com
-
-"""
-
-__author__ = 'tim@linfiniti.com'
-__revision__ = '$Format:%H$'
-__date__ = '10/01/2011'
-__copyright__ = (
-    'Copyright (c) 2010 by Ivan Mincik, ivan.mincik@gista.sk and '
-    'Copyright (c) 2011 German Carrillo, geotux_tuxman@linuxmail.org'
-    'Copyright (c) 2014 Tim Sutton, tim@linfiniti.com'
-)
-
 import logging
 from qgis.PyQt.QtCore import QObject, pyqtSlot, pyqtSignal
 from qgis.core import QgsMapLayerRegistry
