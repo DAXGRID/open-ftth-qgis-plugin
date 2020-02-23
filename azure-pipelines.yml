@@ -35,7 +35,7 @@ stages:
       displayName: 'Install QGIS dependencies'
 
     - script: |
-        source ./scripts/run-env-linux.sh /usr/share/qgis
+        source ./scripts/run-env-linux.sh /usr/lib/qgis
       displayName: 'Source run-env-linx script enable testing'
     
     - script: pb_tool compile
