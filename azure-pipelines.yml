@@ -26,7 +26,7 @@ stages:
       displayName: 'Install plugin dependencies'
 
     - script: |
-        pip install nose nosetests-json-extended python-coverage
+        pip install nose nosetests-json-extended coverage
       displayName: 'Install testing dependencies'
 
     - script: |
@@ -41,6 +41,5 @@ stages:
     - script: pb_tool compile
       displayName: 'Compile with pb_tool'
     
-   
     - script: make test
       displayName: 'Run tests'
