@@ -3,12 +3,18 @@ from PyQt5.QtWidgets import QAction, QMessageBox
 from qgis.core import QgsVectorLayer, QgsProject
 import os.path
 from .resources import *
+from .quick_edit_map_tool import QuickEditMapTool
 
 class Start:
     def __init__(self, iface):
         self.iface = iface
 
     def initGui(self):
+        self.setupActions()
+        #self.map_canvas = self.iface.mapCanvas()
+        #self.map_tool = QuickEditMapTool(self.map_canvas)
+
+    def setupActions(self):
         icon_path = ':/plugins/open_ftth/icon.png'
         self.action = QAction(QtGui.QIcon(icon_path), "Open Ftth", self.iface.mainWindow())
         self.action.setCheckable(True)
