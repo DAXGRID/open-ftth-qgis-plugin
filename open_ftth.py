@@ -62,7 +62,7 @@ class OpenFtth:
             QCoreApplication.installTranslator(self.translator)
 
         self.actions = []
-        
+
         icon_path = ':/plugins/open_ftth/icon.png'
         self.open_ftth_action = QtWidgets.QAction(QtGui.QIcon(icon_path), "Open Ftth", self.iface.mainWindow())
         self.open_ftth_action.setCheckable(True)
