@@ -1,12 +1,17 @@
+from PyQt5 import QtWidgets, QtGui;
 from PyQt5.QtWidgets import QAction, QMessageBox
 from qgis.core import QgsVectorLayer, QgsProject
+import os.path
+from .resources import *
 
 class Start:
     def __init__(self, iface):
         self.iface = iface
 
     def initGui(self):
-        self.action = QAction('OPENFTTH', self.iface.mainWindow())
+        icon_path = ':/plugins/open_ftth/icon.png'
+        self.action = QAction(QtGui.QIcon(icon_path), "Open Ftth", self.iface.mainWindow())
+        self.action.setCheckable(True)
         self.action.triggered.connect(self.run)
         self.iface.addToolBarIcon(self.action)
 
@@ -15,11 +20,11 @@ class Start:
         del self.action
 
     def run(self):
-        self.routeSegmentLayer = QgsProject.instance().mapLayersByName('route_segment')[0]
-        self.routeSegmentLayer.layerModified.connect(self.logFeatureAdded)
+        self.route_segment_layer = QgsProject.instance().mapLayersByName('route_segment')[0]
+        self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
 
-        self.routeNodeLayer = QgsProject.instance().mapLayersByName('route_node')[0]
-        self.routeNodeLayer.layerModified.connect(self.logFeatureAdded)
+        self.route_node_layer = QgsProject.instance().mapLayersByName('route_node')[0]
+        self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
 
-    def logFeatureAdded(self):
+    def saveActiveLayerEdits(self):
         self.iface.actionSaveActiveLayerEdits().trigger()
