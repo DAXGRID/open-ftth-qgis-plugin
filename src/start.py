@@ -1,9 +1,12 @@
-from PyQt5 import QtWidgets, QtGui;
+from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QAction, QMessageBox
 from PyQt5.QtGui import QCursor
+from PyQt5.QtWebKit import QWebSettings
+from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
 from .resources import *
 from .quick_edit_map_tool import QuickEditMapTool
+from .widgets.open_ftth_dockwidget import OpenFtthDockWidget
 import time;
 
 class Start:
@@ -27,7 +30,7 @@ class Start:
 
         self.select_action = QAction(QtGui.QIcon(icon_path), "Select", self.iface.mainWindow())
         self.select_action.setCheckable(True)
-        self.select_action.triggered.connect(self.setupAutoSave)
+        self.select_action.triggered.connect(self.setupSelectTool);
 
         self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
         self.action_group.addAction(self.autosave_action)
@@ -40,6 +43,7 @@ class Start:
         self.iface.addPluginToMenu("&Open Ftth", self.autosave_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
+        self.dockwidget = None
 
     def unload(self):
         for action in self.actions:
@@ -62,7 +66,17 @@ class Start:
             self.map_canvas = self.iface.mapCanvas()
             self.map_tool = QuickEditMapTool(self.map_canvas)
 
-        self.setCursor(QCursor())
+        if self.dockwidget == None:
+            self.dockwidget = OpenFtthDockWidget()
+
+        #self.dockwidget.closingPlugin.connect(self.onClosePlugin)
+        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
+        self.dockwidget.show()
+        self.dockwidget.webView.setUrl(QUrl(("http://localhost:3000")))
+
+        settings = QWebSettings.globalSettings()
+
+        #self.setCursor(QCursor())
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:
