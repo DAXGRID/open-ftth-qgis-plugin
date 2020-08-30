@@ -4,20 +4,13 @@ Open Ftth Plugin for QGIS
 
 ## Note
 
-This plugin is currently under development - to make it fully functional the
-other parts of the open-ftth system, needs to be up and running.
+* This plugin is currently under development.
+* This plugin is part of the full OpenFTTH system, to work it requires that system to run.
 
 ## Dependencies
 
 ```bash
 pip install pyqt5
-pip install pb_tool
-```
-
-## Compile
-
-```bash
-pb_tool compile
 ```
 
 ## Install
