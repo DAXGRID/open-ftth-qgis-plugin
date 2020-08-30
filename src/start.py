@@ -4,6 +4,7 @@ from PyQt5.QtGui import QCursor
 from qgis.core import QgsVectorLayer, QgsProject
 from .resources import *
 from .quick_edit_map_tool import QuickEditMapTool
+import time;
 
 class Start:
     def __init__(self, iface):
