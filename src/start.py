@@ -7,6 +7,7 @@ from qgis.core import QgsVectorLayer, QgsProject
 from .resources import *
 from .quick_edit_map_tool import QuickEditMapTool
 from .widgets.open_ftth_dockwidget import OpenFtthDockWidget
+from .console_printer import ConsolePrinter
 import time;
 
 class Start:
@@ -61,6 +62,7 @@ class Start:
         except Exception:
             pass
 
+
     def setupSelectTool(self):
         if self.select_tool_enabled is False:
             self.map_canvas = self.iface.mapCanvas()
@@ -69,21 +71,27 @@ class Start:
         if self.dockwidget == None:
             self.dockwidget = OpenFtthDockWidget()
 
+        self.dockwidget.show()
+        self.setupWebView()
+
+    def setupWebView(self):
         #self.dockwidget.closingPlugin.connect(self.onClosePlugin)
         self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-        self.dockwidget.show()
-        self.dockwidget.webView.setUrl(QUrl(("http://localhost:3000")))
+        self.dockwidget.webView.loadFinished.connect(self.loadFinished)
+        self.dockwidget.webView.load(QUrl(("http://localhost:3000")))
+        self.dockwidget.webView.show() 
 
-        settings = QWebSettings.globalSettings()
-
-        #self.setCursor(QCursor())
+    def loadFinished(self):
+        frame = self.dockwidget.webView.page().mainFrame();
+        self.printer = ConsolePrinter(self.iface)
+        frame.addToJavaScriptWindowObject("printer", self.printer); 
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:
-            self.route_segment_layer = QgsProject.instance().mapLayersByName('route_segment')[0]
+            self.route_segment_layer = QgsProject.instance().mapLayersByName('Tracélinje')[0]
             self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
 
-            self.route_node_layer = QgsProject.instance().mapLayersByName('route_node')[0]
+            self.route_node_layer = QgsProject.instance().mapLayersByName('Tracénode')[0]
             self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
 
             self.autosave_enabled = True
