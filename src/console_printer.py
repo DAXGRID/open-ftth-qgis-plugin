@@ -1,5 +1,5 @@
 from PyQt5.QtCore import QObject, pyqtSlot
-from qgis.core import QgsVectorLayerCache
+from qgis.core import QgsVectorLayerCache, QgsProject
 from qgis.gui import QgsVertexMarker, QgsMapCanvasSnappingUtils
 
 class ConsolePrinter(QObject):
@@ -12,8 +12,6 @@ class ConsolePrinter(QObject):
         print (message)
         cachingEnabled = self.iface.mapCanvas().isCachingEnabled()
 
-        for layer in self.iface.mapCanvas().layers():
-            if cachingEnabled:
-                layer.triggerRepaint()
-                self.iface.mapCanvas().refresh()
-                self.iface.mapCanvas().snappingUtils().clearAllLocators()
+        QgsProject.instance().mapLayersByName('route_segment')[0].triggerRepaint()
+        QgsProject.instance().mapLayersByName('route_node')[0].triggerRepaint()
+        self.iface.mapCanvas().snappingUtils().clearAllLocators()

@@ -88,10 +88,10 @@ class Start:
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:
-            self.route_segment_layer = QgsProject.instance().mapLayersByName('Tracélinje')[0]
+            self.route_segment_layer = QgsProject.instance().mapLayersByName('route_segment')[0]
             self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
 
-            self.route_node_layer = QgsProject.instance().mapLayersByName('Tracénode')[0]
+            self.route_node_layer = QgsProject.instance().mapLayersByName('route_node')[0]
             self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
 
             self.autosave_enabled = True
