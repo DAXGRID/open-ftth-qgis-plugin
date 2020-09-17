@@ -6,9 +6,10 @@ from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
 from .resources import *
 from .quick_edit_map_tool import QuickEditMapTool
-from .widgets.open_ftth_dockwidget import OpenFtthDockWidget
 from .console_printer import ConsolePrinter
-import time;
+from .listen_websockets import ListenWebsocket
+import time
+import asyncio
 
 class Start:
     def __init__(self, iface):
@@ -17,6 +18,8 @@ class Start:
         self.select_tool_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
+        self.thread = ListenWebsocket()
+        self.thread.start()
 
     def initGui(self):
         self.setupActions()
@@ -44,7 +47,6 @@ class Start:
         self.iface.addPluginToMenu("&Open Ftth", self.autosave_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
-        self.dockwidget = None
 
     def unload(self):
         for action in self.actions:
@@ -55,6 +57,8 @@ class Start:
 
         self.autosave_enabled = False
         self.select_tool_enabled = False
+
+        self.thread.on_close()
 
         try:
             self.route_segment_layer.layerModified.disconnect()
@@ -68,23 +72,7 @@ class Start:
             self.map_canvas = self.iface.mapCanvas()
             self.map_tool = QuickEditMapTool(self.map_canvas)
 
-        if self.dockwidget == None:
-            self.dockwidget = OpenFtthDockWidget()
-
-        self.dockwidget.show()
-        self.setupWebView()
-
-    def setupWebView(self):
-        #self.dockwidget.closingPlugin.connect(self.onClosePlugin)
-        self.iface.addDockWidget(Qt.RightDockWidgetArea, self.dockwidget)
-        self.dockwidget.webView.loadFinished.connect(self.loadFinished)
-        self.dockwidget.webView.load(QUrl(("http://localhost:3000")))
-        self.dockwidget.webView.show() 
-
-    def loadFinished(self):
-        frame = self.dockwidget.webView.page().mainFrame();
-        self.printer = ConsolePrinter(self.iface)
-        frame.addToJavaScriptWindowObject("printer", self.printer); 
+        self.thread.send("hellow rodll!")
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:

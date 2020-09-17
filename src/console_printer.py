@@ -9,7 +9,6 @@ class ConsolePrinter(QObject):
 
     @pyqtSlot(str)
     def text(self, message):
-        print (message)
         cachingEnabled = self.iface.mapCanvas().isCachingEnabled()
 
         QgsProject.instance().mapLayersByName('route_segment')[0].triggerRepaint()
