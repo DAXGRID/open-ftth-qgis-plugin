@@ -18,7 +18,7 @@ class Start:
         self.select_tool_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
-        self.thread = ListenWebsocket()
+        self.thread = ListenWebsocket(self.iface)
         self.thread.start()
 
     def initGui(self):

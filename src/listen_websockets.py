@@ -5,8 +5,9 @@ import _thread as thread
 import time;
 
 class ListenWebsocket(QtCore.QThread):
-    def __init__(self, parent=None):
+    def __init__(self, iface, parent=None):
         super(ListenWebsocket, self).__init__(parent)
+        self.iface = iface;
 
         websocket.enableTrace(True)
 
@@ -19,7 +20,7 @@ class ListenWebsocket(QtCore.QThread):
         self.ws.run_forever()
 
     def on_message(self, ws, message):
-        EventHandler().handle(message)
+        EventHandler(self.iface).handle(message)
 
     def on_error(self, ws, error):
         print(error)
