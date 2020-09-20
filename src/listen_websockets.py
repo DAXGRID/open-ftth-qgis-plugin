@@ -1,4 +1,5 @@
 from qgis.PyQt import QtCore
+from .event_handler import EventHandler
 import websocket
 import _thread as thread
 import time;
@@ -18,7 +19,7 @@ class ListenWebsocket(QtCore.QThread):
         self.ws.run_forever()
 
     def on_message(self, ws, message):
-        print(message)
+        EventHandler().handle(message)
 
     def on_error(self, ws, error):
         print(error)
