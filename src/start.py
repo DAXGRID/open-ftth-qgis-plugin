@@ -6,7 +6,6 @@ from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
 from .resources import *
 from .quick_edit_map_tool import QuickEditMapTool
-from .console_printer import ConsolePrinter
 from .listen_websockets import ListenWebsocket
 import time
 import asyncio
