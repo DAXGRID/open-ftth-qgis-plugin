@@ -24,6 +24,12 @@ class ListenWebsocket(QtCore.QThread):
 
     def on_error(self, ws, error):
         print(error)
+        self.reconnect()
+       
+    def reconnect(self):
+        self.ws.close();
+        time.sleep(3)
+        self.run() 
 
     def on_close(self, ws):
         print("### closed ###")
