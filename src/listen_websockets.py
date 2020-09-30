@@ -1,8 +1,9 @@
 from qgis.PyQt import QtCore
 from .event_handler import EventHandler
+from .application_settings import ApplicationSettings;
 import websocket
 import _thread as thread
-import time;
+import time
 
 class ListenWebsocket(QtCore.QThread):
     def __init__(self, iface, parent=None):
@@ -12,11 +13,10 @@ class ListenWebsocket(QtCore.QThread):
 
         websocket.enableTrace(True)
 
-        self.ws = websocket.WebSocketApp("ws://localhost:5000/ws",
+        self.ws = websocket.WebSocketApp(ApplicationSettings().get_websocket_url(),
                                 on_message = lambda ws,msg: self.on_message(ws, msg),
                                 on_error = lambda ws,msg: self.on_error(ws, msg),
                                 on_open = lambda ws: self.on_open(ws)) 
-
     def run(self):
         self.ws.run_forever()
 
