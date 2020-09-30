@@ -71,8 +71,6 @@ class Start:
             self.map_canvas = self.iface.mapCanvas()
             self.map_tool = QuickEditMapTool(self.map_canvas)
 
-        self.thread.send("hellow rodll!")
-
     def setupAutoSave(self):
         if self.autosave_enabled is False:
             self.route_segment_layer = QgsProject.instance().mapLayersByName('route_segment')[0]

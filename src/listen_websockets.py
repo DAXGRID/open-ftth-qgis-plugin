@@ -8,6 +8,7 @@ class ListenWebsocket(QtCore.QThread):
     def __init__(self, iface, parent=None):
         super(ListenWebsocket, self).__init__(parent)
         self.iface = iface;
+        self.retries = 0;
 
         websocket.enableTrace(True)
 
@@ -19,6 +20,10 @@ class ListenWebsocket(QtCore.QThread):
     def run(self):
         self.ws.run_forever()
 
+    def on_open(self, ws):
+        print("Connected")
+        self.retries = 0;
+
     def on_message(self, ws, message):
         EventHandler(self.iface).handle(message)
 
@@ -28,11 +33,18 @@ class ListenWebsocket(QtCore.QThread):
        
     def reconnect(self):
         self.ws.close();
-        time.sleep(3)
+        if self.retries >= 10:
+            print("Waiting 60 secs before trying to reconnect")
+            time.sleep(60)
+            self.retries = 0;
+        else:
+            time.sleep(3)
+            self.retries += 1
+
         self.run() 
 
     def on_close(self, ws):
-        print("### closed ###")
+        print("Connected closed")
 
     def send(self, message):
         self.ws.send(message)
