@@ -7,6 +7,7 @@ from qgis.core import QgsVectorLayer, QgsProject
 from .resources import *
 from .quick_edit_map_tool import QuickEditMapTool
 from .listen_websockets import ListenWebsocket
+from .application_settings import ApplicationSettings
 import time
 import asyncio
 
@@ -73,10 +74,10 @@ class Start:
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:
-            self.route_segment_layer = QgsProject.instance().mapLayersByName('route_segment')[0]
+            self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_segment_layer_name())[0]
             self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
 
-            self.route_node_layer = QgsProject.instance().mapLayersByName('route_node')[0]
+            self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_node_layer_name())[0]
             self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
 
             self.autosave_enabled = True

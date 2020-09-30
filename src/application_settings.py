@@ -8,3 +8,9 @@ class ApplicationSettings:
 
     def get_websocket_url(self):
         return self.configuration.get("websocket", "url")
+
+    def get_route_segment_layer_name(self):
+        return self.configuration.get('layers', "routesegment");
+
+    def get_route_node_layer_name(self):
+        return self.configuration.get('layers', "routesegment");
