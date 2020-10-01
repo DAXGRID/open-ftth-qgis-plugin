@@ -5,9 +5,9 @@ from PyQt5.QtWebKit import QWebSettings
 from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
 from .resources import *
-from .quick_edit_map_tool import QuickEditMapTool
 from .listen_websockets import ListenWebsocket
 from .application_settings import ApplicationSettings
+from .events.get_selected_features_handler import GetSelectedFeaturesHandler
 import time
 import asyncio
 
@@ -33,7 +33,6 @@ class Start:
         self.autosave_action.triggered.connect(self.setupAutoSave)
 
         self.select_action = QAction(QtGui.QIcon(icon_path), "Select", self.iface.mainWindow())
-        self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
         self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
@@ -58,19 +57,16 @@ class Start:
         self.autosave_enabled = False
         self.select_tool_enabled = False
 
-        self.thread.on_close()
-
         try:
             self.route_segment_layer.layerModified.disconnect()
             self.route_node_layer.layerModified.disconnect()
+            self.thread.on_close()
         except Exception:
             pass
 
-
     def setupSelectTool(self):
-        if self.select_tool_enabled is False:
-            self.map_canvas = self.iface.mapCanvas()
-            self.map_tool = QuickEditMapTool(self.map_canvas)
+        selectedFeatures = GetSelectedFeaturesHandler(self.iface).handle()
+        print(selectedFeatures)
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:

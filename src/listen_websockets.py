@@ -29,6 +29,7 @@ class ListenWebsocket(QtCore.QThread):
 
     def on_error(self, ws, error):
         print(error)
+        print("Reconnecting to WS")
         self.reconnect()
        
     def reconnect(self):
