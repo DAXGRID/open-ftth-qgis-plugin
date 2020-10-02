@@ -18,8 +18,8 @@ class Start:
         self.select_tool_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
-        self.thread = ListenWebsocket(self.iface)
-        self.thread.start()
+        self.websocket = ListenWebsocket(self.iface)
+        self.websocket.start()
 
     def initGui(self):
         self.setupActions()
@@ -60,12 +60,12 @@ class Start:
         try:
             self.route_segment_layer.layerModified.disconnect()
             self.route_node_layer.layerModified.disconnect()
-            self.thread.on_close()
+            self.websocket.onClose()
         except Exception:
             pass
 
     def setupSelectTool(self):
-        selectedFeatures = GetSelectedFeaturesHandler(self.iface).handle()
+        selectedFeatures = GetSelectedFeaturesHandler(self.iface, self.websocket).handle()
         print(selectedFeatures)
 
     def setupAutoSave(self):
