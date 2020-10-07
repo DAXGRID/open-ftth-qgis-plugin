@@ -25,6 +25,6 @@ class GeographicalAreaUpdatedHandler:
         self.semaphore.release()
 
     def clearAllLocatorsTask(self):
-        time.sleep(2)
+        time.sleep(1)
         self.iface.mapCanvas().snappingUtils().clearAllLocators()
         self.clearAllLocators = True
