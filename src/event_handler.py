@@ -7,7 +7,7 @@ from .events.get_selected_features_handler import GetSelectedFeaturesHandler
 class EventHandler:
     def __init__(self, iface, websocket):
         self.iface = iface
-        self.websocket
+        self.websocket = websocket
 
     def handle(self, message):
         json = base64.b64decode(message);
