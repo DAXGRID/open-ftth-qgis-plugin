@@ -17,6 +17,9 @@ class ListenWebsocket(QtCore.QThread):
                                 on_message = lambda ws,msg: self.onMessage(ws, msg),
                                 on_error = lambda ws,msg: self.onError(ws, msg),
                                 on_open = lambda ws: self.onOpen(ws)) 
+
+        self.eventHandler = EventHandler(self.iface, self.websocket)
+
     def run(self):
         self.websocket.run_forever()
 
@@ -25,7 +28,7 @@ class ListenWebsocket(QtCore.QThread):
         self.retries = 0;
 
     def onMessage(self, ws, message):
-        EventHandler(self.iface, self.websocket).handle(message)
+        self.eventHandler.handle(message)
 
     def onError(self, ws, error):
         print(error)
