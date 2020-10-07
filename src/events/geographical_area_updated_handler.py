@@ -27,5 +27,4 @@ class GeographicalAreaUpdatedHandler:
     def clearAllLocatorsTask(self):
         time.sleep(2)
         self.iface.mapCanvas().snappingUtils().clearAllLocators()
-        print("Refreshed locators")
         self.clearAllLocators = True
