@@ -13,6 +13,12 @@ Open Ftth Plugin for QGIS
 pip install pyqt5
 ```
 
+## To update icons
+
+```sh
+pyrcc5 -o resources.py resources/resources.qrc
+```
+
 ## Install
 
 Install by copying the entire directory to:

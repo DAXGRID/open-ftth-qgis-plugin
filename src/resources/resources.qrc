@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/plugins/open_ftth" >
-        <file>icon.png</file>
+        <file>auto_save.svg</file>
+        <file>auto_identify.svg</file>
     </qresource>
 </RCC>
