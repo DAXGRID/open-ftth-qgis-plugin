@@ -27,12 +27,13 @@ class Start:
     def setupActions(self):
         self.actions = []
 
-        icon_path = ":/plugins/open_ftth/icon.png"
-        self.autosave_action = QAction(QtGui.QIcon(icon_path), "Autosave", self.iface.mainWindow())
+        icon_auto_save = ":/plugins/open_ftth/auto_save.svg"
+        auto_identify = ":/plugins/open_ftth/auto_identify.svg"
+        self.autosave_action = QAction(QtGui.QIcon(icon_auto_save), "Autosave", self.iface.mainWindow())
         self.autosave_action.setCheckable(True)
         self.autosave_action.triggered.connect(self.setupAutoSave)
 
-        self.select_action = QAction(QtGui.QIcon(icon_path), "Select", self.iface.mainWindow())
+        self.select_action = QAction(QtGui.QIcon(auto_identify), "Select", self.iface.mainWindow())
         self.select_action.triggered.connect(self.setupSelectTool);
 
         self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
