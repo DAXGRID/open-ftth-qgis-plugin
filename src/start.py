@@ -34,6 +34,7 @@ class Start:
         self.autosave_action.triggered.connect(self.setupAutoSave)
 
         self.select_action = QAction(QtGui.QIcon(auto_identify), "Select", self.iface.mainWindow())
+        self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
         self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
@@ -59,32 +60,56 @@ class Start:
         self.select_tool_enabled = False
 
         try:
-            self.route_segment_layer.layerModified.disconnect()
-            self.route_node_layer.layerModified.disconnect()
-            self.websocket.onClose()
+            self.disconnectSelectedFeatures()
+            self.disconnectSelectTool()
+            self.websocket.close()
         except Exception:
             pass
 
     def setupSelectTool(self):
-        selectedFeatures = GetSelectedFeaturesHandler(self.iface, self.websocket).handle()
-        print(selectedFeatures)
+        if self.select_tool_enabled is False:
+            self.connectSelectedTool()
+        else:
+            self.disconnectSelectTool()
+
+    def connectSelectedTool(self):
+        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_segment_layer_name())[0]
+        self.route_segment_layer.selectionChanged.connect(self.sendSelectedFeatures)
+
+        self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_node_layer_name())[0]
+        self.route_node_layer.selectionChanged.connect(self.sendSelectedFeatures)
+
+        self.select_tool_enabled = True
+
+    def disconnectSelectTool(self):
+        self.route_node_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
+        self.route_segment_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
+        self.select_tool_enabled = False
+
+    def sendSelectedFeatures(self):
+        GetSelectedFeaturesHandler(self.iface, self.websocket).handle()
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:
-            self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_segment_layer_name())[0]
-            self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
-
-            self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_node_layer_name())[0]
-            self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
-
-            self.autosave_enabled = True
+            self.connectAutosave()
             self.saveActiveLayerEdits()
-
         else:
-            self.route_segment_layer.layerModified.disconnect()
-            self.route_node_layer.layerModified.disconnect()
-            self.autosave_action.setChecked(False)
-            self.autosave_enabled = False
+            self.disconnectAutosave()
+
+    def connectAutosave(self):
+        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_segment_layer_name())[0]
+        self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
+
+        self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_node_layer_name())[0]
+        self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
+
+        self.autosave_enabled = True
+
+    def disconnectAutosave(self):
+        self.route_segment_layer.layerModified.disconnect(self.saveActiveLayerEdits)
+        self.route_node_layer.layerModified.disconnect(self.saveActiveLayerEdits)
+        self.autosave_action.setChecked(False)
+        self.autosave_enabled = False
 
     def saveActiveLayerEdits(self):
         self.iface.actionSaveActiveLayerEdits().trigger()

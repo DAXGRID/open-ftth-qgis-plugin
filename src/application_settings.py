@@ -13,4 +13,4 @@ class ApplicationSettings:
         return self.configuration.get('layers', "routesegment");
 
     def get_route_node_layer_name(self):
-        return self.configuration.get('layers', "routesegment");
+        return self.configuration.get('layers', "routenode");
