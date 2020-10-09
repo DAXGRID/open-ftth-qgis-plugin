@@ -1,13 +1,15 @@
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtWidgets import QAction, QMessageBox
+from PyQt5.QtWidgets import QAction, QMessageBox, QActionGroup, QWidgetAction
 from PyQt5.QtGui import QCursor
 from PyQt5.QtWebKit import QWebSettings
 from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
+from qgis.gui import QgsMapCanvas
 from .resources import *
 from .listen_websockets import ListenWebsocket
 from .application_settings import ApplicationSettings
 from .events.get_selected_features_handler import GetSelectedFeaturesHandler
+from .identify_select import IdentifySelect
 import time
 import asyncio
 
@@ -38,17 +40,46 @@ class Start:
         self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
-        self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
-        self.action_group.addAction(self.autosave_action)
-        self.action_group.addAction(self.select_action)
-        self.action_group.setExclusive(False)
+        #self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
+        #self.action_group.addAction(self.autosave_action)
+        #self.action_group.addAction(self.select_action)
+        #self.action_group.setExclusive(True)
 
-        self.actions.append(self.autosave_action)
-        self.actions.append(self.select_action)
+        #self.actions.append(self.autosave_action)
+        #self.actions.append(self.select_action)
 
-        self.iface.addPluginToMenu("&Open Ftth", self.autosave_action)
-        self.iface.addToolBarIcon(self.autosave_action)
+        self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
+        #self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
+
+        self.identify_tool = IdentifySelect(self.iface.mapCanvas())
+        self.identify_tool.setAction(self.select_action)
+
+        # Build an action list from QGIS navigation toolbar
+        actionList = self.iface.mapNavToolToolBar().actions()
+
+        # Add actions from QGIS attributes toolbar (handling QWidgetActions)
+        tmpActionList = self.iface.attributesToolBar().actions()        
+        for action in tmpActionList:
+            if isinstance(action, QWidgetAction):
+                actionList.extend( action.defaultWidget().actions() )
+            else:
+                actionList.append(action) 
+
+         # ... add other toolbars' action lists...
+        tmpActionList = self.iface.digitizeToolBar().actions()        
+        for action in tmpActionList:
+            if isinstance(action, QWidgetAction):
+                actionList.extend( action.defaultWidget().actions() )
+            else:
+                actionList.append(action) 
+
+         # Build a group with actions from actionList and add your own action
+        group = QActionGroup(self.iface.mainWindow())
+        group.setExclusive(True)
+        for action in actionList:
+            group.addAction(action)
+        group.addAction(self.select_action)
 
     def unload(self):
         for action in self.actions:
@@ -74,17 +105,11 @@ class Start:
             self.disconnectSelectTool()
 
     def connectSelectedTool(self):
-        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_segment_layer_name())[0]
-        self.route_segment_layer.selectionChanged.connect(self.sendSelectedFeatures)
-
-        self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_node_layer_name())[0]
-        self.route_node_layer.selectionChanged.connect(self.sendSelectedFeatures)
-
         self.select_tool_enabled = True
 
     def disconnectSelectTool(self):
-        self.route_node_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
-        self.route_segment_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
+        #self.route_node_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
+        #self.route_segment_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
         self.select_tool_enabled = False
 
     def sendSelectedFeatures(self):
@@ -116,5 +141,6 @@ class Start:
         self.iface.actionSaveActiveLayerEdits().trigger()
 
     def onIdentified(self, selected_layer, selected_feature):
+        print(selected_feature.id())
         selected_layer.removeSelection()
         selected_layer.select(selected_feature.id())
