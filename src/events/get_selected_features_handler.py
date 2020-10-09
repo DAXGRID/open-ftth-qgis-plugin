@@ -7,8 +7,11 @@ class GetSelectedFeaturesHandler:
 
     def handle(self):
         selected_features = self.iface.mapCanvas().currentLayer().selectedFeatures()
-        selected_features_mrids = []
 
+        if len(selected_features) == 0:
+            return
+
+        selected_features_mrids = []
         for selected_feature in selected_features:
             mrid = selected_feature.attribute("mrid")
             selected_features_mrids.append(mrid)
