@@ -20,6 +20,7 @@ class Start:
         self.route_node_layer = None
         self.websocket = ListenWebsocket(self.iface)
         self.websocket.start()
+        self.getSelectedFeaturesHandler = GetSelectedFeaturesHandler(self.iface, self.websocket)
 
     def initGui(self):
         self.setupActions()
@@ -87,7 +88,7 @@ class Start:
         self.select_tool_enabled = False
 
     def sendSelectedFeatures(self):
-        GetSelectedFeaturesHandler(self.iface, self.websocket).handle()
+        self.getSelectedFeaturesHandler.handle()
 
     def setupAutoSave(self):
         if self.autosave_enabled is False:
