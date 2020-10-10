@@ -17,7 +17,6 @@ class Start:
     def __init__(self, iface):
         self.iface = iface
         self.autosave_enabled = False
-        self.select_tool_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
         self.websocket = ListenWebsocket(self.iface)
@@ -40,20 +39,11 @@ class Start:
         self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
-        #self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
-        #self.action_group.addAction(self.autosave_action)
-        #self.action_group.addAction(self.select_action)
-        #self.action_group.setExclusive(True)
-
-        #self.actions.append(self.autosave_action)
-        #self.actions.append(self.select_action)
-
         self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
-        #self.iface.addToolBarIcon(self.autosave_action)
+        self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
-        self.identify_tool.setAction(self.select_action)
 
         # Build an action list from QGIS navigation toolbar
         actionList = self.iface.mapNavToolToolBar().actions()
@@ -62,7 +52,7 @@ class Start:
         tmpActionList = self.iface.attributesToolBar().actions()        
         for action in tmpActionList:
             if isinstance(action, QWidgetAction):
-                actionList.extend( action.defaultWidget().actions() )
+                actionList.extend( action.defaultWidget().actions()) 
             else:
                 actionList.append(action) 
 
@@ -70,7 +60,7 @@ class Start:
         tmpActionList = self.iface.digitizeToolBar().actions()        
         for action in tmpActionList:
             if isinstance(action, QWidgetAction):
-                actionList.extend( action.defaultWidget().actions() )
+                actionList.extend(action.defaultWidget().actions())
             else:
                 actionList.append(action) 
 
@@ -99,18 +89,7 @@ class Start:
             pass
 
     def setupSelectTool(self):
-        if self.select_tool_enabled is False:
-            self.connectSelectedTool()
-        else:
-            self.disconnectSelectTool()
-
-    def connectSelectedTool(self):
-        self.select_tool_enabled = True
-
-    def disconnectSelectTool(self):
-        #self.route_node_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
-        #self.route_segment_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
-        self.select_tool_enabled = False
+        self.iface.mapCanvas().setMapTool(self.identify_tool)
 
     def sendSelectedFeatures(self):
         self.getSelectedFeaturesHandler.handle()
