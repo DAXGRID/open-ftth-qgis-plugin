@@ -17,7 +17,6 @@ class IdentifySelect(QgsMapToolIdentify):
         layers = QgsProject.instance().mapLayersByName('tree')
 
         try:
-            print("clicked")
             results = self.identify(mouseEvent.x(), mouseEvent.y(), layers)
         except Exception as e:
             print("Identify Exception: ", e)

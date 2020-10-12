@@ -44,6 +44,7 @@ class Start:
         self.iface.addToolBarIcon(self.select_action)
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
+        self.identify_tool.identified.connect(self.onIdentified)
 
         # Build an action list from QGIS navigation toolbar
         actionList = self.iface.mapNavToolToolBar().actions()
