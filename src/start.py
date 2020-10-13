@@ -8,8 +8,8 @@ from qgis.gui import QgsMapCanvas, QgsHighlight
 from .resources import *
 from .listen_websockets import ListenWebsocket
 from .application_settings import ApplicationSettings
-from .events.get_selected_features_handler import GetSelectedFeaturesHandler
 from .identify_select import IdentifySelect
+from .events.identify_network_element_handler import IdentifyNetworkElementHandler
 import time
 import asyncio
 
@@ -21,8 +21,8 @@ class Start:
         self.route_node_layer = None
         self.websocket = ListenWebsocket(self.iface)
         self.websocket.start()
-        self.getSelectedFeaturesHandler = GetSelectedFeaturesHandler(self.iface, self.websocket)
         self.identifyHighlight = None
+        self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
 
     def initGui(self):
         self.setupActions()
@@ -139,3 +139,6 @@ class Start:
         self.identifyHighlight.show()
 
         mrid = selected_feature.attribute("mrid")
+        self.identifyNetworkElementHandler.handle(mrid)
+
+
