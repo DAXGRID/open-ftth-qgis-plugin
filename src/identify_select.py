@@ -2,6 +2,7 @@ from PyQt5.QtCore import pyqtSignal, Qt
 from PyQt5.QtGui import QPixmap, QCursor
 from qgis.core import QgsVectorLayer, QgsFeature, QgsPointXY, QgsProject
 from qgis.gui import QgsMapToolIdentify
+from .application_settings import ApplicationSettings
 
 class IdentifySelect(QgsMapToolIdentify):
     identified = pyqtSignal(QgsVectorLayer, QgsFeature)
@@ -12,9 +13,11 @@ class IdentifySelect(QgsMapToolIdentify):
         self.layerType = getattr(QgsMapToolIdentify, layerType)
         self.canvas = canvas
         self.setCursor(QCursor(Qt.PointingHandCursor))
+        self.applicationSettings = ApplicationSettings()
 
     def canvasReleaseEvent(self, mouseEvent):
-        layers = QgsProject.instance().mapLayersByName('tree')
+        layerNames = self.applicationSettings.get_route_segment_layer_name() + ', ' + self.applicationSettings.get_route_node_layer_name()
+        layers = QgsProject.instance().mapLayersByName(layerNames)
 
         try:
             results = self.identify(mouseEvent.x(), mouseEvent.y(), layers)

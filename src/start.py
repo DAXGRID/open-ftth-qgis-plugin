@@ -1,10 +1,10 @@
 from PyQt5 import QtWidgets, QtGui
 from PyQt5.QtWidgets import QAction, QMessageBox, QActionGroup, QWidgetAction
-from PyQt5.QtGui import QCursor
+from PyQt5.QtGui import QCursor, QColor
 from PyQt5.QtWebKit import QWebSettings
 from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
-from qgis.gui import QgsMapCanvas
+from qgis.gui import QgsMapCanvas, QgsHighlight
 from .resources import *
 from .listen_websockets import ListenWebsocket
 from .application_settings import ApplicationSettings
@@ -22,6 +22,7 @@ class Start:
         self.websocket = ListenWebsocket(self.iface)
         self.websocket.start()
         self.getSelectedFeaturesHandler = GetSelectedFeaturesHandler(self.iface, self.websocket)
+        self.identifyHighlight = None
 
     def initGui(self):
         self.setupActions()
@@ -121,6 +122,14 @@ class Start:
         self.iface.actionSaveActiveLayerEdits().trigger()
 
     def onIdentified(self, selected_layer, selected_feature):
-        print(selected_feature.id())
-        selected_layer.removeSelection()
-        selected_layer.select(selected_feature.id())
+        if self.identifyHighlight != None:
+            self.identifyHighlight.hide()
+
+        color = QColor(0, 255, 0)
+        self.identifyHighlight = QgsHighlight(self.iface.mapCanvas(), selected_feature.geometry(), selected_layer)
+        self.identifyHighlight.setWidth(2)
+        self.identifyHighlight.setColor(color)
+        #self.highLight.setFillColor(color)
+        self.identifyHighlight.show()
+
+        mrid = selected_feature.attribute("mrid")
