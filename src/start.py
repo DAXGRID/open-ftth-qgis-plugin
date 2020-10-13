@@ -1,13 +1,15 @@
 from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtWidgets import QAction, QMessageBox
-from PyQt5.QtGui import QCursor
+from PyQt5.QtWidgets import QAction, QMessageBox, QActionGroup, QWidgetAction
+from PyQt5.QtGui import QCursor, QColor
 from PyQt5.QtWebKit import QWebSettings
 from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
+from qgis.gui import QgsMapCanvas, QgsHighlight
 from .resources import *
 from .listen_websockets import ListenWebsocket
 from .application_settings import ApplicationSettings
-from .events.get_selected_features_handler import GetSelectedFeaturesHandler
+from .identify_select import IdentifySelect
+from .events.identify_network_element_handler import IdentifyNetworkElementHandler
 import time
 import asyncio
 
@@ -15,12 +17,12 @@ class Start:
     def __init__(self, iface):
         self.iface = iface
         self.autosave_enabled = False
-        self.select_tool_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
         self.websocket = ListenWebsocket(self.iface)
         self.websocket.start()
-        self.getSelectedFeaturesHandler = GetSelectedFeaturesHandler(self.iface, self.websocket)
+        self.identifyHighlight = None
+        self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
 
     def initGui(self):
         self.setupActions()
@@ -38,17 +40,44 @@ class Start:
         self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
-        self.action_group = QtWidgets.QActionGroup(self.iface.mainWindow())
-        self.action_group.addAction(self.autosave_action)
-        self.action_group.addAction(self.select_action)
-        self.action_group.setExclusive(False)
-
-        self.actions.append(self.autosave_action)
-        self.actions.append(self.select_action)
-
-        self.iface.addPluginToMenu("&Open Ftth", self.autosave_action)
+        self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
+
+        self.identify_tool = IdentifySelect(self.iface.mapCanvas())
+        self.identify_tool.identified.connect(self.onIdentified)
+
+        # Build an action list from QGIS navigation toolbar
+        actionList = self.iface.mapNavToolToolBar().actions()
+
+        # Add actions from QGIS attributes toolbar (handling QWidgetActions)
+        tmpActionList = self.iface.attributesToolBar().actions()        
+        for action in tmpActionList:
+            if isinstance(action, QWidgetAction):
+                actionList.extend( action.defaultWidget().actions()) 
+            else:
+                actionList.append(action) 
+
+        tmpActionList = self.iface.digitizeToolBar().actions()        
+        for action in tmpActionList:
+            if isinstance(action, QWidgetAction):
+                actionList.extend(action.defaultWidget().actions())
+            else:
+                actionList.append(action) 
+
+        tmpActionList = self.iface.selectionToolBar().actions()
+        for action in tmpActionList:
+            if isinstance(action, QWidgetAction):
+                actionList.extend(action.defaultWidget().actions())
+            else:
+                actionList.append(action)
+
+         # Build a group with actions from actionList and add your own action
+        group = QActionGroup(self.iface.mainWindow())
+        group.setExclusive(True)
+        for action in actionList:
+            group.addAction(action)
+        group.addAction(self.select_action)
 
     def unload(self):
         for action in self.actions:
@@ -68,24 +97,7 @@ class Start:
             pass
 
     def setupSelectTool(self):
-        if self.select_tool_enabled is False:
-            self.connectSelectedTool()
-        else:
-            self.disconnectSelectTool()
-
-    def connectSelectedTool(self):
-        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_segment_layer_name())[0]
-        self.route_segment_layer.selectionChanged.connect(self.sendSelectedFeatures)
-
-        self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_node_layer_name())[0]
-        self.route_node_layer.selectionChanged.connect(self.sendSelectedFeatures)
-
-        self.select_tool_enabled = True
-
-    def disconnectSelectTool(self):
-        self.route_node_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
-        self.route_segment_layer.selectionChanged.disconnect(self.sendSelectedFeatures)
-        self.select_tool_enabled = False
+        self.iface.mapCanvas().setMapTool(self.identify_tool)
 
     def sendSelectedFeatures(self):
         self.getSelectedFeaturesHandler.handle()
@@ -116,5 +128,17 @@ class Start:
         self.iface.actionSaveActiveLayerEdits().trigger()
 
     def onIdentified(self, selected_layer, selected_feature):
-        selected_layer.removeSelection()
-        selected_layer.select(selected_feature.id())
+        if self.identifyHighlight != None:
+            self.identifyHighlight.hide()
+
+        color = QColor(0, 255, 0)
+        self.identifyHighlight = QgsHighlight(self.iface.mapCanvas(), selected_feature.geometry(), selected_layer)
+        self.identifyHighlight.setWidth(2)
+        self.identifyHighlight.setColor(color)
+        #self.highLight.setFillColor(color)
+        self.identifyHighlight.show()
+
+        mrid = selected_feature.attribute("mrid")
+        self.identifyNetworkElementHandler.handle(mrid)
+
+
