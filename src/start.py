@@ -58,13 +58,19 @@ class Start:
             else:
                 actionList.append(action) 
 
-         # ... add other toolbars' action lists...
         tmpActionList = self.iface.digitizeToolBar().actions()        
         for action in tmpActionList:
             if isinstance(action, QWidgetAction):
                 actionList.extend(action.defaultWidget().actions())
             else:
                 actionList.append(action) 
+
+        tmpActionList = self.iface.selectionToolBar().actions()
+        for action in tmpActionList:
+            if isinstance(action, QWidgetAction):
+                actionList.extend(action.defaultWidget().actions())
+            else:
+                actionList.append(action)
 
          # Build a group with actions from actionList and add your own action
         group = QActionGroup(self.iface.mainWindow())
