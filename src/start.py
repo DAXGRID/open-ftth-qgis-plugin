@@ -12,6 +12,7 @@ from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
 import time
 import asyncio
+import os
 
 class Start:
     def __init__(self, iface):
@@ -23,6 +24,7 @@ class Start:
         self.websocket.start()
         self.identifyHighlight = None
         self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
+        self.application_settings = ApplicationSettings()
 
     def initGui(self):
         self.setupActions()
@@ -133,12 +135,16 @@ class Start:
 
         color = QColor(0, 255, 0)
         self.identifyHighlight = QgsHighlight(self.iface.mapCanvas(), selected_feature.geometry(), selected_layer)
-        self.identifyHighlight.setWidth(2)
+        self.identifyHighlight.setWidth(3)
         self.identifyHighlight.setColor(color)
-        #self.highLight.setFillColor(color)
         self.identifyHighlight.show()
 
         mrid = selected_feature.attribute("mrid")
-        self.identifyNetworkElementHandler.handle(mrid)
 
+        selected_type = ''
+        if self.application_settings.get_route_node_layer_name() == selected_layer.sourceName():
+            selected_type = "RouteNode"
+        elif self.application_settings.get_route_segment_layer_name() == selected_layer.sourceName():
+            selected_type = "RouteSegment"
 
+        self.identifyNetworkElementHandler.handle(mrid, selected_type)

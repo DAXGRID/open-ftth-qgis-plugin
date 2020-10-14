@@ -1,4 +1,5 @@
 import json
+import getpass
 
 class GetSelectedFeaturesHandler:
     def __init__(self, iface, websocket):
@@ -18,7 +19,8 @@ class GetSelectedFeaturesHandler:
 
         response = {
             "eventType": "GetSelectedFeaturesResponse",
-            "selectedFeaturesMrid": selected_features_mrids
+            "selectedFeaturesMrid": selected_features_mrids,
+            "user": getpass.getuser()
         }
 
         self.websocket.send(json.dumps(response))
