@@ -12,8 +12,7 @@ class EventHandler:
         self.getSelectedFeaturesHandler = GetSelectedFeaturesHandler(self.iface, self.websocket)
 
     def handle(self, message):
-        json = base64.b64decode(message);
-        deserializedObject = self.deserialize(json);
+        deserializedObject = self.deserialize(message);
 
         if deserializedObject.eventType == "ObjectsWithinGeographicalAreaUpdated":
             self.geographicalAreaUpdatedHandler.handle()
