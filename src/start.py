@@ -13,6 +13,7 @@ from .events.identify_network_element_handler import IdentifyNetworkElementHandl
 import time
 import asyncio
 import os
+import webbrowser
 
 class Start:
     def __init__(self, iface):
@@ -34,6 +35,7 @@ class Start:
 
         icon_auto_save = ":/plugins/open_ftth/auto_save.svg"
         auto_identify = ":/plugins/open_ftth/auto_identify.svg"
+        web_browser = ":/plugins/open_ftth/browser_icon.svg"
         self.autosave_action = QAction(QtGui.QIcon(icon_auto_save), "Autosave", self.iface.mainWindow())
         self.autosave_action.setCheckable(True)
         self.autosave_action.triggered.connect(self.setupAutoSave)
@@ -42,9 +44,14 @@ class Start:
         self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
+        self.web_browser_action = QAction(QtGui.QIcon(web_browser), "Web-browser", self.iface.mainWindow())
+        self.web_browser_action.setCheckable(False)
+        self.web_browser_action.triggered.connect(self.connectWebBrowser)
+
         self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
+        self.iface.addToolBarIcon(self.web_browser_action)
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
@@ -126,6 +133,9 @@ class Start:
         self.route_node_layer.layerModified.disconnect(self.saveActiveLayerEdits)
         self.autosave_action.setChecked(False)
         self.autosave_enabled = False
+
+    def connectWebBrowser(self):
+        webbrowser.open(self.application_settings.get_website_url(), new=2)
 
     def saveActiveLayerEdits(self):
         self.iface.actionSaveActiveLayerEdits().trigger()

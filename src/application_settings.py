@@ -10,7 +10,10 @@ class ApplicationSettings:
         return self.configuration.get("websocket", "url")
 
     def get_route_segment_layer_name(self):
-        return self.configuration.get('layers', "routesegment");
+        return self.configuration.get('layers', "routesegment")
 
     def get_route_node_layer_name(self):
-        return self.configuration.get('layers', "routenode");
+        return self.configuration.get('layers', "routenode")
+
+    def get_website_url(self):
+        return self.configuration.get('website', 'url')
