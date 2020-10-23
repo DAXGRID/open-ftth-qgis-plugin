@@ -48,8 +48,9 @@ class Start:
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
+        self.buildActionListIdentifyTool()
 
-        # Build an action list from QGIS navigation toolbar
+    def buildActionListIdentifyTool(self):
         actionList = self.iface.mapNavToolToolBar().actions()
 
         # Add actions from QGIS attributes toolbar (handling QWidgetActions)
