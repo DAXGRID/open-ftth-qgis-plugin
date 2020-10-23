@@ -2,5 +2,6 @@
     <qresource prefix="/plugins/open_ftth" >
         <file>auto_save.svg</file>
         <file>auto_identify.svg</file>
+        <file>browser_icon.svg</file>
     </qresource>
 </RCC>
