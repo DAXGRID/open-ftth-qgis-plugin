@@ -16,8 +16,8 @@ class EventHandler:
 
         if deserializedObject.eventType == "ObjectsWithinGeographicalAreaUpdated":
             self.geographicalAreaUpdatedHandler.handle()
-        elif deserializedObject.eventType == "GetSelectedFeatures":
-            self.getSelectedFeaturesHandler.handle()
+        elif deserializedObject.eventType == "RetrieveSelected":
+            self.getSelectedFeaturesHandler.handle(deserializedObject)
             
     def deserialize(self, jsonMessage):
         return json.loads(jsonMessage, object_hook=lambda d: SimpleNamespace(**d))
