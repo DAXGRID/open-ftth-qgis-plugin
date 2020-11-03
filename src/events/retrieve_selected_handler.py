@@ -1,7 +1,7 @@
 import json
 import getpass
 
-class GetSelectedFeaturesHandler:
+class RetrieveSelectedHandler:
     def __init__(self, iface, websocket):
         self.iface = iface
         self.websocket = websocket
@@ -9,16 +9,13 @@ class GetSelectedFeaturesHandler:
     def handle(self):
         selected_features = self.iface.mapCanvas().currentLayer().selectedFeatures()
 
-        if len(selected_features) == 0:
-            return
-
         selected_features_mrids = []
         for selected_feature in selected_features:
             mrid = selected_feature.attribute("mrid")
             selected_features_mrids.append(mrid)
 
         response = {
-            "eventType": "GetSelectedFeaturesResponse",
+            "eventType": "RetrieveSelectedResponse",
             "selectedFeaturesMrid": selected_features_mrids,
             "user": getpass.getuser()
         }
