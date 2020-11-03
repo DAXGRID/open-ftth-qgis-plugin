@@ -20,7 +20,7 @@ class RetrieveSelectedHandler:
         response = {
             "eventType": "RetrieveSelectedResponse",
             "selectedFeaturesMrid": selected_features_mrids,
-            "user": getpass.getuser()
+            "username": getpass.getuser()
         }
 
         self.websocket.send(json.dumps(response))
