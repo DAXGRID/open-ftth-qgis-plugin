@@ -10,7 +10,7 @@ class IdentifyNetworkElementHandler:
             "eventType": "IdentifyNetworkElement",
             "identifiedFeatureId": identified_feature_id,
             "selectedType": selected_type,
-            "user": getpass.getuser()
+            "username": getpass.getuser()
         }
 
         self.websocket.send(json.dumps(response))
