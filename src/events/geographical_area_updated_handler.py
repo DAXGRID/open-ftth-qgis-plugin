@@ -25,6 +25,7 @@ class GeographicalAreaUpdatedHandler:
         self.semaphore.release()
 
     def clearAllLocatorsTask(self):
-        time.sleep(1)
+        time.sleep(1) # Hack or QGIS crashes
+
         self.iface.mapCanvas().snappingUtils().clearAllLocators()
         self.clearAllLocators = True
