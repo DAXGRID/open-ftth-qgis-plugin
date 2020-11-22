@@ -29,5 +29,5 @@ class PanToCoordinate:
 
         newRect = QgsRectangle(xMin,yMin,xMax,yMax)
         canvas.setExtent(newRect)
-        time.sleep(0.05) # Hack otherwise QGIS refresh bugs out
+        time.sleep(0.1) # Hack otherwise QGIS refresh bugs out
         canvas.refreshAllLayers()
