@@ -16,7 +16,7 @@ class ListenWebsocket(QtCore.QThread):
         self.websocket = websocket.WebSocketApp(ApplicationSettings().get_websocket_url(),
                                 on_message = lambda ws,msg: self.onMessage(ws, msg),
                                 on_error = lambda ws,msg: self.onError(ws, msg),
-                                on_open = lambda ws: self.onOpen(ws)) 
+                                on_open = lambda ws: self.onOpen(ws))
 
         self.eventHandler = EventHandler(self.iface, self.websocket)
 
@@ -34,7 +34,7 @@ class ListenWebsocket(QtCore.QThread):
         print(error)
         print("Reconnecting to WS")
         self.reconnect()
-       
+
     def reconnect(self):
         self.websocket.close();
         if self.retries >= 10:
@@ -45,7 +45,7 @@ class ListenWebsocket(QtCore.QThread):
             time.sleep(3)
             self.retries += 1
 
-        self.run() 
+        self.run()
 
     def onClose(self, ws):
         print("Connected closed")

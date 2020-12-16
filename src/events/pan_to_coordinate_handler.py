@@ -3,7 +3,7 @@ import getpass
 from qgis.core import QgsRectangle, QgsPoint, QgsGeometry
 import time;
 
-class PanToCoordinate:
+class PanToCoordinateHandler:
     def __init__(self, iface):
         self.iface = iface
 
@@ -11,7 +11,7 @@ class PanToCoordinate:
         # TODO Add this in again
         #if message.username != getpass.getuser():
         #//return
-        
+
         x = message.coordinate[0]
         y = message.coordinate[1]
 
