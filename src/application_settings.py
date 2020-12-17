@@ -17,3 +17,9 @@ class ApplicationSettings:
 
     def get_website_url(self):
         return self.configuration.get('website', 'url')
+
+    def get_types_route_segment(self):
+        return self.configuration.get('types', 'routesegment')
+
+    def get_types_route_node(self):
+        return self.configuration.get('types', 'routenode')

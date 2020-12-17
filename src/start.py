@@ -154,8 +154,8 @@ class Start:
 
         selected_type = ''
         if self.application_settings.get_route_node_layer_name() == selected_layer.sourceName():
-            selected_type = "RouteNode"
+            selected_type = self.application_settings.get_route_node_layer_name
         elif self.application_settings.get_route_segment_layer_name() == selected_layer.sourceName():
-            selected_type = "RouteSegment"
+            selected_type = self.application_settings.get_types_route_segment
 
         self.identifyNetworkElementHandler.handle(mrid, selected_type)
