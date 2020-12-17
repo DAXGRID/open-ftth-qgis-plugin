@@ -16,7 +16,7 @@ class IdentifySelect(QgsMapToolIdentify):
         self.applicationSettings = ApplicationSettings()
 
     def canvasReleaseEvent(self, mouseEvent):
-        layerNames = self.applicationSettings.get_route_segment_layer_name() + ', ' + self.applicationSettings.get_route_node_layer_name()
+        layerNames = self.applicationSettings.get_layers_route_segment_name() + ', ' + self.applicationSettings.get_layers_route_node_name()
         layers = QgsProject.instance().mapLayersByName(layerNames)
 
         try:
