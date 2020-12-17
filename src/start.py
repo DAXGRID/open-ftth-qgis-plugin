@@ -6,7 +6,7 @@ from qgis.PyQt.QtCore import Qt, QUrl
 from qgis.core import QgsVectorLayer, QgsProject
 from qgis.gui import QgsMapCanvas, QgsHighlight
 from .resources import *
-from .listen_websockets import ListenWebsocket
+from .bridge_websocket import BridgeWebsocket
 from .application_settings import ApplicationSettings
 from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
@@ -21,7 +21,7 @@ class Start:
         self.autosave_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
-        self.websocket = ListenWebsocket(self.iface)
+        self.websocket = BridgeWebsocket(self.iface)
         self.websocket.start()
         self.identifyHighlight = None
         self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
