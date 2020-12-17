@@ -120,10 +120,10 @@ class Start:
             self.disconnectAutosave()
 
     def connectAutosave(self):
-        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_segment_layer_name())[0]
+        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
         self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
 
-        self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_route_node_layer_name())[0]
+        self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())[0]
         self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
 
         self.autosave_enabled = True
@@ -153,9 +153,9 @@ class Start:
         mrid = selected_feature.attribute("mrid")
 
         selected_type = ''
-        if self.application_settings.get_route_node_layer_name() == selected_layer.sourceName():
-            selected_type = self.application_settings.get_route_node_layer_name
-        elif self.application_settings.get_route_segment_layer_name() == selected_layer.sourceName():
+        if self.application_settings.get_layers_route_node_name() == selected_layer.sourceName():
+            selected_type = self.application_settings.get_layers_route_node_name
+        elif self.application_settinget_layers_route_segment_namename() == selected_layer.sourceName():
             selected_type = self.application_settings.get_types_route_segment
 
         self.identifyNetworkElementHandler.handle(mrid, selected_type)

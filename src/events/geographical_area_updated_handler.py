@@ -13,8 +13,8 @@ class GeographicalAreaUpdatedHandler:
         self.semaphore = threading.Semaphore(1)
 
     def handle(self):
-        QgsProject.instance().mapLayersByName(self.applicationSettings.get_route_segment_layer_name())[0].triggerRepaint()
-        QgsProject.instance().mapLayersByName(self.applicationSettings.get_route_node_layer_name())[0].triggerRepaint()
+        QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_segment_name())[0].triggerRepaint()
+        QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_node_name())[0].triggerRepaint()
 
         self.semaphore.acquire()
 
