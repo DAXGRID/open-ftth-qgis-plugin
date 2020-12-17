@@ -1,15 +1,15 @@
 from qgis.PyQt import QtCore
 from .event_handler import EventHandler
-from .application_settings import ApplicationSettings;
-import websocket
+from .application_settings import ApplicationSettings
+from .libs import websocket
 import _thread as thread
 import time
 
 class ListenWebsocket(QtCore.QThread):
     def __init__(self, iface, parent=None):
         super(ListenWebsocket, self).__init__(parent)
-        self.iface = iface;
-        self.retries = 0;
+        self.iface = iface
+        self.retries = 0
 
         websocket.enableTrace(True)
 
@@ -25,7 +25,7 @@ class ListenWebsocket(QtCore.QThread):
 
     def onOpen(self, ws):
         print("Connected")
-        self.retries = 0;
+        self.retries = 0
 
     def onMessage(self, ws, message):
         self.eventHandler.handle(message)
@@ -36,11 +36,11 @@ class ListenWebsocket(QtCore.QThread):
         self.reconnect()
 
     def reconnect(self):
-        self.websocket.close();
+        self.websocket.close()
         if self.retries >= 10:
             print("Waiting 60 secs before trying to reconnect")
             time.sleep(60)
-            self.retries = 0;
+            self.retries = 0
         else:
             time.sleep(3)
             self.retries += 1
