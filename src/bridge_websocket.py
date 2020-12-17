@@ -5,9 +5,9 @@ from .libs import websocket
 import _thread as thread
 import time
 
-class ListenWebsocket(QtCore.QThread):
+class BridgeWebsocket(QtCore.QThread):
     def __init__(self, iface, parent=None):
-        super(ListenWebsocket, self).__init__(parent)
+        super(BridgeWebsocket, self).__init__(parent)
         self.iface = iface
         self.retries = 0
 
