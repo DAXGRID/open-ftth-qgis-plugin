@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QAction, QMessageBox, QActionGroup, QWidgetAction
 from PyQt5.QtGui import QCursor, QColor
 from PyQt5.QtWebKit import QWebSettings
 from qgis.PyQt.QtCore import Qt, QUrl
-from qgis.core import QgsVectorLayer, QgsProject
+from qgis.core import QgsVectorLayer, QgsProject, Qgis
 from qgis.gui import QgsMapCanvas, QgsHighlight
 from .resources import *
 from .bridge_websocket import BridgeWebsocket
@@ -152,10 +152,15 @@ class Start:
 
         mrid = selected_feature.attribute("mrid")
 
-        selected_type = ''
+        selected_type = ""
         if self.application_settings.get_layers_route_node_name() == selected_layer.sourceName():
-            selected_type = self.application_settings.get_layers_route_node_name
-        elif self.application_settinget_layers_route_segment_namename() == selected_layer.sourceName():
-            selected_type = self.application_settings.get_types_route_segment
+            selected_type = self.application_settings.get_types_route_node()
+        elif self.application_settings.get_layers_route_segment_name() == selected_layer.sourceName():
+            selected_type = self.application_settings.get_types_route_segment()
+        else:
+            warningMessage = f"""This tool only works when selected layer is either:
+            {self.application_settings.get_layers_route_node_name()} or {self.application_settings.get_layers_route_segment_name()}."""
+            self.iface.messageBar().pushMessage("Warning", warningMessage, level=Qgis.Warning)
 
-        self.identifyNetworkElementHandler.handle(mrid, selected_type)
+        if selected_type != "":
+            self.identifyNetworkElementHandler.handle(mrid, selected_type)
