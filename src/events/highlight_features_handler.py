@@ -13,8 +13,11 @@ class HighlightFeaturesHandler:
         route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
         #route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())[0]
 
+
+        message.iface
+
         # The important part: get the feature iterator with an expression
-        features = route_segment_layer.getFeatures(QgsFeatureRequest().setFilterExpression(u'"Counties" = \'Norwich\''))
+        features = route_segment_layer.getFeatures(QgsFeatureRequest().setFilterExpression(u'"mrid" = \'\''))
         # Set the selection
         #route_segment_layer.setSelectedFeatures([f.id() for f in it])
 
