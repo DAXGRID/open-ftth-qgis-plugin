@@ -17,11 +17,10 @@ class HighlightFeaturesHandler:
         elif message.featureType == self.settings.get_types_route_node():
             layer = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_node_name())[0]
 
-        testFeatures = ["c8eae0f0-75ec-4976-aafc-5955663b760b", "1234e380-aacb-4687-aee0-3423a9047dc5"]
         filterExpression = ""
-        for i in range(len(testFeatures)):
-            mrid = testFeatures[i]
-            if i == len(testFeatures) - 1:
+        for i in range(len(message.identifiedFeatureMrids)):
+            mrid = message.identifiedFeatureMrids[i]
+            if i == len(message.identifiedFeatureMrids) - 1:
                 filterExpression += f'"mrid" = \'{mrid}\''
             else:
                 filterExpression += f'"mrid" = \'{mrid}\' OR '
