@@ -8,27 +8,36 @@ import time;
 class HighlightFeaturesHandler:
     def __init__(self, iface):
         self.iface = iface
+        self.settings = ApplicationSettings()
 
     def handle(self, message):
-        route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
-        #route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())[0]
+        layer = None
+        if message.featureType == self.settings.get_types_route_segment():
+            layer = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())[0]
+        elif message.featureType == self.settings.get_types_route_node():
+            layer = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_node_name())[0]
 
+        testFeatures = ["c8eae0f0-75ec-4976-aafc-5955663b760b", "1234e380-aacb-4687-aee0-3423a9047dc5"]
+        filterExpression = ""
+        for i in range(len(testFeatures)):
+            mrid = testFeatures[i]
+            if i == len(testFeatures) - 1:
+                filterExpression += f'"mrid" = \'{mrid}\''
+            else:
+                filterExpression += f'"mrid" = \'{mrid}\' OR '
 
-        message.iface
+        features = layer.getFeatures(QgsFeatureRequest().setFilterExpression(filterExpression))
 
-        # The important part: get the feature iterator with an expression
-        features = route_segment_layer.getFeatures(QgsFeatureRequest().setFilterExpression(u'"mrid" = \'\''))
-        # Set the selection
-        #route_segment_layer.setSelectedFeatures([f.id() for f in it])
-
-        color = QColor(255, 0, 0)
-
-        highlights = []
+        color = QColor(0, 0, 255)
+        highlightFeatures = []
         for feature in features:
-            identifyHighlight = QgsHighlight(self.iface.mapCanvas(), feature.geometry(), route_segment_layer)
+            identifyHighlight = QgsHighlight(self.iface.mapCanvas(), feature.geometry(), layer)
             identifyHighlight.setWidth(3)
             identifyHighlight.setColor(color)
-            highlights.append(identifyHighlight)
+            highlightFeatures.append(identifyHighlight)
 
-        for highlight in highlights:
+        for highlight in highlightFeatures:
             highlight.show()
+
+        time.sleep(0.1) # Hack otherwise QGIS refresh bugs out
+        self.iface.mapCanvas().refreshAllLayers()
