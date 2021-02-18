@@ -1,5 +1,6 @@
 import os
-from configparser import ConfigParser 
+from configparser import ConfigParser
+
 
 class ApplicationSettings:
     def __init__(self):
