@@ -13,7 +13,7 @@ class HighlightFeaturesHandler:
 
     def handle(self, message):
         if message.username != getpass.getuser():
-           return
+            return
 
         layer = None
         if message.featureType == self.settings.get_types_route_segment():
