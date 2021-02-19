@@ -3,7 +3,8 @@ from PyQt5.QtGui import QColor
 from qgis.core import QgsProject, QgsFeatureRequest
 from ..application_settings import ApplicationSettings
 import json
-import time;
+import time
+import getpass
 
 class HighlightFeaturesHandler:
     def __init__(self, iface):
@@ -11,6 +12,9 @@ class HighlightFeaturesHandler:
         self.settings = ApplicationSettings()
 
     def handle(self, message):
+        if message.username != getpass.getuser():
+           return
+
         layer = None
         if message.featureType == self.settings.get_types_route_segment():
             layer = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())[0]

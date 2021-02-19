@@ -8,9 +8,8 @@ class PanToCoordinateHandler:
         self.iface = iface
 
     def handle(self, message):
-        # TODO Add this in again
-        #if message.username != getpass.getuser():
-        #//return
+        if message.username != getpass.getuser():
+            return
 
         x = message.coordinate[0]
         y = message.coordinate[1]

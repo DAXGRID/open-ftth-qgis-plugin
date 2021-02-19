@@ -7,9 +7,8 @@ class RetrieveSelectedHandler:
         self.websocket = websocket
 
     def handle(self, message):
-        # TODO uncomment when better handling of user
-        #if message.username != getpass.getuser():
-            #return
+        if message.username != getpass.getuser():
+           return
 
         selected_features = self.iface.mapCanvas().currentLayer().selectedFeatures()
 
