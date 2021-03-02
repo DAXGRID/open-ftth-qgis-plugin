@@ -8,7 +8,9 @@ from .bridge_websocket import BridgeWebsocket
 from .application_settings import ApplicationSettings
 from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
+from .events.retrieve_selected_handler import RetrieveSelectedHandler
 import webbrowser
+import getpass
 
 
 class Start:
@@ -21,10 +23,13 @@ class Start:
         self.websocket.start()
         self.identifyHighlight = None
         self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
+        self.retrieve_selected_handler = RetrieveSelectedHandler(self.iface, self.websocket)
         self.application_settings = ApplicationSettings()
+        self.layers_loaded = False
 
     def initGui(self):
         self.setupActions()
+        self.iface.layerTreeView().currentLayerChanged.connect(self.layersLoaded)
 
     def setupActions(self):
         self.actions = []
@@ -60,7 +65,7 @@ class Start:
         tmpActionList = self.iface.attributesToolBar().actions()
         for action in tmpActionList:
             if isinstance(action, QWidgetAction):
-                actionList.extend( action.defaultWidget().actions())
+                actionList.extend(action.defaultWidget().actions())
             else:
                 actionList.append(action)
 
@@ -115,6 +120,12 @@ class Start:
         else:
             self.disconnectAutosave()
 
+    def layersLoaded(self):
+        if self.layers_loaded is False:
+            self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
+            self.route_segment_layer.selectionChanged.connect(self.onSelectedSegment)
+            self.layers_loaded = True
+
     def connectAutosave(self):
         self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
         self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
@@ -135,6 +146,10 @@ class Start:
 
     def saveActiveLayerEdits(self):
         self.iface.actionSaveActiveLayerEdits().trigger()
+
+    def onSelectedSegment(self):
+        message = type('Expando', (object,), {'username': getpass.getuser()})()
+        self.retrieve_selected_handler.handle(message)
 
     def onIdentified(self, selected_layer, selected_feature):
         if self.identifyHighlight is not None:
