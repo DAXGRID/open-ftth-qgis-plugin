@@ -1,5 +1,7 @@
 import json
 import getpass
+from ..application_settings import ApplicationSettings
+from qgis.core import QgsProject
 
 
 class RetrieveSelectedHandler:
@@ -11,7 +13,7 @@ class RetrieveSelectedHandler:
         if message.username != getpass.getuser():
             return
 
-        selected_features = self.iface.mapCanvas().currentLayer().selectedFeatures()
+        selected_features = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0].selectedFeatures()
 
         selected_features_mrids = []
         for selected_feature in selected_features:
