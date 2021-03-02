@@ -2,9 +2,9 @@ from qgis.gui import QgsHighlight
 from PyQt5.QtGui import QColor
 from qgis.core import QgsProject, QgsFeatureRequest
 from ..application_settings import ApplicationSettings
-import json
 import time
 import getpass
+
 
 class HighlightFeaturesHandler:
     def __init__(self, iface):
@@ -42,5 +42,5 @@ class HighlightFeaturesHandler:
         for highlight in highlightFeatures:
             highlight.show()
 
-        time.sleep(0.1) # Hack otherwise QGIS refresh bugs out
+        time.sleep(0.1)  # Hack otherwise QGIS refresh bugs out
         self.iface.mapCanvas().refreshAllLayers()

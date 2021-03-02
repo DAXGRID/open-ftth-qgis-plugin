@@ -1,8 +1,9 @@
 from PyQt5.QtCore import pyqtSignal, Qt
-from PyQt5.QtGui import QPixmap, QCursor
+from PyQt5.QtGui import QCursor
 from qgis.core import QgsVectorLayer, QgsFeature, QgsPointXY, QgsProject
 from qgis.gui import QgsMapToolIdentify
 from .application_settings import ApplicationSettings
+
 
 class IdentifySelect(QgsMapToolIdentify):
     identified = pyqtSignal(QgsVectorLayer, QgsFeature)

@@ -1,19 +1,15 @@
-from PyQt5 import QtWidgets, QtGui
-from PyQt5.QtWidgets import QAction, QMessageBox, QActionGroup, QWidgetAction
-from PyQt5.QtGui import QCursor, QColor
-from PyQt5.QtWebKit import QWebSettings
-from qgis.PyQt.QtCore import Qt, QUrl
-from qgis.core import QgsVectorLayer, QgsProject, Qgis
-from qgis.gui import QgsMapCanvas, QgsHighlight
+from PyQt5 import QtGui
+from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction
+from PyQt5.QtGui import QColor
+from qgis.core import QgsProject, Qgis
+from qgis.gui import QgsHighlight
 from .resources import *
 from .bridge_websocket import BridgeWebsocket
 from .application_settings import ApplicationSettings
 from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
-import time
-import asyncio
-import os
 import webbrowser
+
 
 class Start:
     def __init__(self, iface):
@@ -61,19 +57,19 @@ class Start:
         actionList = self.iface.mapNavToolToolBar().actions()
 
         # Add actions from QGIS attributes toolbar (handling QWidgetActions)
-        tmpActionList = self.iface.attributesToolBar().actions()        
+        tmpActionList = self.iface.attributesToolBar().actions()
         for action in tmpActionList:
             if isinstance(action, QWidgetAction):
-                actionList.extend( action.defaultWidget().actions()) 
+                actionList.extend( action.defaultWidget().actions())
             else:
-                actionList.append(action) 
+                actionList.append(action)
 
-        tmpActionList = self.iface.digitizeToolBar().actions()        
+        tmpActionList = self.iface.digitizeToolBar().actions()
         for action in tmpActionList:
             if isinstance(action, QWidgetAction):
                 actionList.extend(action.defaultWidget().actions())
             else:
-                actionList.append(action) 
+                actionList.append(action)
 
         tmpActionList = self.iface.selectionToolBar().actions()
         for action in tmpActionList:
@@ -82,7 +78,7 @@ class Start:
             else:
                 actionList.append(action)
 
-         # Build a group with actions from actionList and add your own action
+        # Build a group with actions from actionList and add your own action
         group = QActionGroup(self.iface.mainWindow())
         group.setExclusive(True)
         for action in actionList:
@@ -141,7 +137,7 @@ class Start:
         self.iface.actionSaveActiveLayerEdits().trigger()
 
     def onIdentified(self, selected_layer, selected_feature):
-        if self.identifyHighlight != None:
+        if self.identifyHighlight is not None:
             self.identifyHighlight.hide()
 
         color = QColor(0, 255, 0)

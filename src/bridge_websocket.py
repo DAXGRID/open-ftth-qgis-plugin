@@ -2,8 +2,8 @@ from qgis.PyQt import QtCore
 from .event_handler import EventHandler
 from .application_settings import ApplicationSettings
 from .libs import websocket
-import _thread as thread
 import time
+
 
 class BridgeWebsocket(QtCore.QThread):
     def __init__(self, iface, parent=None):

@@ -1,7 +1,7 @@
-import json
 import getpass
-from qgis.core import QgsRectangle, QgsPoint, QgsGeometry
-import time;
+from qgis.core import QgsRectangle
+import time
+
 
 class PanToCoordinateHandler:
     def __init__(self, iface):
@@ -26,7 +26,7 @@ class PanToCoordinateHandler:
         yMin = currExt.yMinimum() + dy
         yMax = currExt.yMaximum() + dy
 
-        newRect = QgsRectangle(xMin,yMin,xMax,yMax)
+        newRect = QgsRectangle(xMin, yMin, xMax, yMax)
         canvas.setExtent(newRect)
-        time.sleep(0.1) # Hack otherwise QGIS refresh bugs out
+        time.sleep(0.1)  # Hack otherwise QGIS refresh bugs out
         canvas.refreshAllLayers()

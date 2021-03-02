@@ -1,9 +1,8 @@
-from PyQt5.QtCore import QObject, pyqtSlot
-from qgis.core import QgsVectorLayerCache, QgsProject
-from qgis.gui import QgsVertexMarker, QgsMapCanvasSnappingUtils
+from qgis.core import QgsProject
 from ..application_settings import ApplicationSettings
 import time
 import threading
+
 
 class GeographicalAreaUpdatedHandler:
     def __init__(self, iface):
@@ -20,12 +19,12 @@ class GeographicalAreaUpdatedHandler:
 
         if self.clearAllLocators:
             self.clearAllLocators = False
-            threading.Thread(target = self.clearAllLocatorsTask).start()
+            threading.Thread(target=self.clearAllLocatorsTask).start()
 
         self.semaphore.release()
 
     def clearAllLocatorsTask(self):
-        time.sleep(1) # Hack or QGIS crashes
+        time.sleep(1)  # Hack or QGIS crashes
 
         self.iface.mapCanvas().snappingUtils().clearAllLocators()
         self.clearAllLocators = True

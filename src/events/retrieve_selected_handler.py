@@ -1,6 +1,7 @@
 import json
 import getpass
 
+
 class RetrieveSelectedHandler:
     def __init__(self, iface, websocket):
         self.iface = iface
@@ -8,7 +9,7 @@ class RetrieveSelectedHandler:
 
     def handle(self, message):
         if message.username != getpass.getuser():
-           return
+            return
 
         selected_features = self.iface.mapCanvas().currentLayer().selectedFeatures()
 

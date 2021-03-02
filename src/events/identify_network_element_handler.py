@@ -1,6 +1,7 @@
 import json
 import getpass
 
+
 class IdentifyNetworkElementHandler:
     def __init__(self, websocket):
         self.websocket = websocket
