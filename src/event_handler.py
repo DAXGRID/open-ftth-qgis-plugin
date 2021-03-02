@@ -1,10 +1,10 @@
 import json
-import base64
 from types import SimpleNamespace
 from .events.geographical_area_updated_handler import GeographicalAreaUpdatedHandler
 from .events.retrieve_selected_handler import RetrieveSelectedHandler
 from .events.pan_to_coordinate_handler import PanToCoordinateHandler
 from .events.highlight_features_handler import HighlightFeaturesHandler
+
 
 class EventHandler:
     def __init__(self, iface, websocket):
