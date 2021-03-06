@@ -1,11 +1,12 @@
 # Open Ftth - QGIS Plugin
 
-Open Ftth Plugin for QGIS
+Open Ftth Plugin for QGIS (Currently under development)
 
-## Note
+## Information
 
-* This plugin is currently under development.
-* This plugin is part of the full OpenFTTH system, to work it requires that system to run.
+* This plugin is part of the full OpenFTTH system, to work it requires that system to run. It's only purpose is to communicate with the OpenFTTH system, therefore not a lot of functionality is built into the plugin.
+
+For now you can check the overview - some of it is outdated [link](https://github.com/DAXGRID/open-ftth-overview), but in the future a webpage will be made with an overview of the system.
 
 ## Dependencies
 
