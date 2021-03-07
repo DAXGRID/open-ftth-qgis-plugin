@@ -6,7 +6,7 @@ import time
 
 
 class BridgeWebsocket(QtCore.QThread):
-    def __init__(self, iface, parent=None):
+    def __init__(self, iface, app_state, parent=None):
         super(BridgeWebsocket, self).__init__(parent)
         self.iface = iface
         self.retries = 0
@@ -18,7 +18,7 @@ class BridgeWebsocket(QtCore.QThread):
                                 on_error = lambda ws,msg: self.onError(ws, msg),
                                 on_open = lambda ws: self.onOpen(ws))
 
-        self.eventHandler = EventHandler(self.iface, self.websocket)
+        self.eventHandler = EventHandler(self.iface, self.websocket, app_state)
 
     def run(self):
         self.websocket.run_forever()
