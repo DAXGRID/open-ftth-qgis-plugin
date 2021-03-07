@@ -19,7 +19,7 @@ class Start:
         self.autosave_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
-        self.websocket = BridgeWebsocket(self.iface)
+        self.websocket = BridgeWebsocket(self.iface, self)
         self.websocket.start()
         self.identifyHighlight = None
         self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
@@ -173,5 +173,9 @@ class Start:
             {self.application_settings.get_layers_route_node_name()} or {self.application_settings.get_layers_route_segment_name()}."""
             self.iface.messageBar().pushMessage("Warning", warningMessage, level=Qgis.Warning)
 
+        self.last_identified_feature_mrid = mrid
+        self.last_identified_feature_type = selected_type
+
         if selected_type != "":
             self.identifyNetworkElementHandler.handle(mrid, selected_type)
+
