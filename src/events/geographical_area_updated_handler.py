@@ -9,19 +9,14 @@ class GeographicalAreaUpdatedHandler:
         self.iface = iface
         self.applicationSettings = ApplicationSettings()
         self.clearAllLocators = True
-        self.semaphore = threading.Semaphore(1)
 
     def handle(self):
         QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_segment_name())[0].triggerRepaint()
         QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_node_name())[0].triggerRepaint()
 
-        self.semaphore.acquire()
-
         if self.clearAllLocators:
             self.clearAllLocators = False
             threading.Thread(target=self.clearAllLocatorsTask).start()
-
-        self.semaphore.release()
 
     def clearAllLocatorsTask(self):
         time.sleep(1)  # Hack or QGIS crashes

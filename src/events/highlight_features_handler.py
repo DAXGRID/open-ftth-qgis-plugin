@@ -2,7 +2,6 @@ from qgis.gui import QgsHighlight
 from PyQt5.QtGui import QColor
 from qgis.core import QgsProject, QgsFeatureRequest
 from ..application_settings import ApplicationSettings
-import time
 import getpass
 
 
@@ -10,10 +9,16 @@ class HighlightFeaturesHandler:
     def __init__(self, iface):
         self.iface = iface
         self.settings = ApplicationSettings()
+        self.highlightFeatures = []
 
     def handle(self, message):
         if message.username != getpass.getuser():
             return
+
+        for highlight in self.highlightFeatures:
+            highlight.hide()
+
+        self.highlightFeatures = []
 
         layer = None
         if message.featureType == self.settings.get_types_route_segment():
@@ -31,16 +36,14 @@ class HighlightFeaturesHandler:
 
         features = layer.getFeatures(QgsFeatureRequest().setFilterExpression(filterExpression))
 
-        color = QColor(0, 0, 255)
-        highlightFeatures = []
+        color = QColor(64, 224, 208)
         for feature in features:
             identifyHighlight = QgsHighlight(self.iface.mapCanvas(), feature.geometry(), layer)
-            identifyHighlight.setWidth(3)
+            identifyHighlight.setWidth(5)
             identifyHighlight.setColor(color)
-            highlightFeatures.append(identifyHighlight)
+            self.highlightFeatures.append(identifyHighlight)
 
-        for highlight in highlightFeatures:
+        for highlight in self.highlightFeatures:
             highlight.show()
 
-        time.sleep(0.1)  # Hack otherwise QGIS refresh bugs out
-        self.iface.mapCanvas().refreshAllLayers()
+        layer.triggerRepaint()
