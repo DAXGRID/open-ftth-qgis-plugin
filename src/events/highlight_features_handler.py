@@ -20,6 +20,9 @@ class HighlightFeaturesHandler:
 
         self.highlightFeatures = []
 
+        if len(message.identifiedFeatureMrids) == 0:
+            return
+
         layer = None
         if message.featureType == self.settings.get_types_route_segment():
             layer = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())[0]
