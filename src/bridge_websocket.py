@@ -11,8 +11,6 @@ class BridgeWebsocket(QtCore.QThread):
         self.iface = iface
         self.retries = 0
 
-        websocket.enableTrace(True)
-
         self.websocket = websocket.WebSocketApp(ApplicationSettings().get_websocket_url(),
                                 on_message = lambda ws,msg: self.onMessage(ws, msg),
                                 on_error = lambda ws,msg: self.onError(ws, msg),
