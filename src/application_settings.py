@@ -1,5 +1,6 @@
 import os
 from configparser import ConfigParser
+import getpass
 
 
 class ApplicationSettings:
@@ -24,3 +25,9 @@ class ApplicationSettings:
 
     def get_types_route_node(self):
         return self.configuration.get('types', 'routenode')
+
+    def get_user_name(self):
+        return getpass.getuser()
+
+    def get_user_name_prefix(self):
+        return getpass.getuser() + self.configuration.get('user', 'prefix')
