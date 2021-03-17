@@ -20,7 +20,6 @@ class Start:
         self.route_segment_layer = None
         self.route_node_layer = None
         self.websocket = BridgeWebsocket(self.iface, self)
-        self.websocket.start()
         self.identifyHighlight = None
         self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
         self.retrieve_selected_handler = RetrieveSelectedHandler(self.iface, self.websocket)
@@ -124,6 +123,7 @@ class Start:
         if self.layers_loaded is False:
             self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
             self.route_segment_layer.selectionChanged.connect(self.onSelectedSegment)
+            self.websocket.start()
             self.layers_loaded = True
 
     def connectAutosave(self):
