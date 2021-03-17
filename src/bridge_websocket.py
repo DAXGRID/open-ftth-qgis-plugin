@@ -13,7 +13,7 @@ class BridgeWebsocket(QtCore.QThread):
         self.retries = 0
         self.receivedMessageOnce = False
         self.settings = ApplicationSettings()
-        self.connected_message = "Connected" + self.settings.get_user_name_prefix()
+
         self.websocket = websocket.WebSocketApp(self.settings.get_websocket_url(),
                                 on_message = lambda ws,msg: self.onMessage(ws, msg),
                                 on_error = lambda ws,msg: self.onError(ws, msg),
