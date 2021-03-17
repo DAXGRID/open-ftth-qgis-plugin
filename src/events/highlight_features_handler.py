@@ -2,7 +2,6 @@ from qgis.gui import QgsHighlight
 from PyQt5.QtGui import QColor
 from qgis.core import QgsProject, QgsFeatureRequest
 from ..application_settings import ApplicationSettings
-import getpass
 
 
 class HighlightFeaturesHandler:
@@ -12,7 +11,7 @@ class HighlightFeaturesHandler:
         self.highlightFeatures = []
 
     def handle(self, message):
-        if message.username != getpass.getuser():
+        if message.username != self.settings.get_user_name_prefix():
             return
 
         for highlight in self.highlightFeatures:
