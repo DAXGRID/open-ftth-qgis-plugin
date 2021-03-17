@@ -19,6 +19,7 @@ class BridgeWebsocket(QtCore.QThread):
         self.eventHandler = EventHandler(self.iface, self.websocket, app_state)
 
     def run(self):
+        time.sleep(1) # Hack because QGIS bugs out....
         self.websocket.run_forever()
 
     def onOpen(self, ws):
