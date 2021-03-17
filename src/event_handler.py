@@ -18,12 +18,9 @@ class EventHandler:
         self.panToCoordinateHandler = PanToCoordinateHandler(self.iface)
         self.highlightFeaturesHandler = HighlightFeaturesHandler(self.iface)
         self.identify_networkwork_element_handler = IdentifyNetworkElementHandler(self.websocket)
-        self.semaphore = threading.Semaphore(1)
 
     def handle(self, message):
         deserializedObject = self.deserialize(message);
-
-        self.semaphore.acquire()
 
         if deserializedObject.eventType == "ObjectsWithinGeographicalAreaUpdated":
             self.geographicalAreaUpdatedHandler.handle()
@@ -35,8 +32,6 @@ class EventHandler:
             self.highlightFeaturesHandler.handle(deserializedObject)
         elif deserializedObject.eventType == "RetrieveIdentifiedNetworkElement":
             self.identify_networkwork_element_handler.handle(self.app_state.last_identified_feature_mrid, self.app_state.last_identified_feature_type)
-
-        self.semaphore.release()
 
     def deserialize(self, jsonMessage):
         return json.loads(jsonMessage, object_hook=lambda d: SimpleNamespace(**d))
