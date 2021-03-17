@@ -1,14 +1,15 @@
-import getpass
 from qgis.core import QgsRectangle
+from ..application_settings import ApplicationSettings
 import time
 
 
 class PanToCoordinateHandler:
     def __init__(self, iface):
         self.iface = iface
+        self.settings = ApplicationSettings()
 
     def handle(self, message):
-        if message.username != getpass.getuser():
+        if message.username != self.settings.get_user_name_prefix():
             return
 
         x = message.coordinate[0]
