@@ -51,7 +51,10 @@ class BridgeWebsocket(QtCore.QThread):
 
     def send(self, message):
         self.websocket.send(message)
-        time.sleep(1)
+        if self.receivedMessageOnce is False:
+            time.sleep(1) # hack
+
+        # We do this twice to make sure that it is connected
         if self.receivedMessageOnce is False:
             self.reconnect()
 
