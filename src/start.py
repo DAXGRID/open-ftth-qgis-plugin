@@ -152,6 +152,14 @@ class Start:
         self.retrieve_selected_handler.handle(message)
 
     def onIdentified(self, selected_layer, selected_feature):
+        selected_type = ""
+        if self.application_settings.get_layers_route_node_name() == selected_layer.sourceName():
+            selected_type = self.application_settings.get_types_route_node()
+        elif self.application_settings.get_layers_route_segment_name() == selected_layer.sourceName():
+            selected_type = self.application_settings.get_types_route_segment()
+        else:
+            return
+
         if self.identifyHighlight is not None:
             self.identifyHighlight.hide()
 
@@ -162,16 +170,6 @@ class Start:
         self.identifyHighlight.show()
 
         mrid = selected_feature.attribute("mrid")
-
-        selected_type = ""
-        if self.application_settings.get_layers_route_node_name() == selected_layer.sourceName():
-            selected_type = self.application_settings.get_types_route_node()
-        elif self.application_settings.get_layers_route_segment_name() == selected_layer.sourceName():
-            selected_type = self.application_settings.get_types_route_segment()
-        else:
-            warningMessage = f"""This tool only works when selected layer is either:
-            {self.application_settings.get_layers_route_node_name()} or {self.application_settings.get_layers_route_segment_name()}."""
-            self.iface.messageBar().pushMessage("Warning", warningMessage, level=Qgis.Warning)
 
         self.last_identified_feature_mrid = mrid
         self.last_identified_feature_type = selected_type
