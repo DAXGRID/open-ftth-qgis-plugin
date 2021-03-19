@@ -27,7 +27,7 @@ class ApplicationSettings:
         return self.configuration.get('types', 'routenode')
 
     def get_user_name(self):
-        return getpass.getuser()
+        return getpass.getuser().lower()
 
     def get_user_name_prefix(self):
-        return getpass.getuser() + self.configuration.get('user', 'prefix')
+        return getpass.getuser().lower() + self.configuration.get('user', 'prefix')
