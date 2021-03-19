@@ -10,7 +10,6 @@ from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
 from .events.retrieve_selected_handler import RetrieveSelectedHandler
 import webbrowser
-import getpass
 
 
 class Start:
@@ -148,7 +147,7 @@ class Start:
         self.iface.actionSaveActiveLayerEdits().trigger()
 
     def onSelectedSegment(self):
-        message = type('Expando', (object,), {'username': getpass.getuser()})()
+        message = type('Expando', (object,), {'username': self.application_settings.get_user_name_prefix()})()
         self.retrieve_selected_handler.handle(message)
 
     def onIdentified(self, selected_layer, selected_feature):
