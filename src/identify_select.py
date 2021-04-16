@@ -8,7 +8,6 @@ from .application_settings import ApplicationSettings
 class IdentifySelect(QgsMapToolIdentify):
     identified = pyqtSignal(QgsVectorLayer, QgsFeature)
     identifiedNone = pyqtSignal()
-    clicked = pyqtSignal(QgsPointXY)
 
     def __init__(self, canvas, layerType='AllLayers'):
         QgsMapToolIdentify.__init__(self, canvas)
