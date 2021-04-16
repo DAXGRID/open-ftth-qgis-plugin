@@ -7,6 +7,7 @@ from .application_settings import ApplicationSettings
 
 class IdentifySelect(QgsMapToolIdentify):
     identified = pyqtSignal(QgsVectorLayer, QgsFeature)
+    identifiedNone = pyqtSignal()
     clicked = pyqtSignal(QgsPointXY)
 
     def __init__(self, canvas, layerType='AllLayers'):
@@ -30,4 +31,4 @@ class IdentifySelect(QgsMapToolIdentify):
             layer = results[0].mLayer
             self.identified.emit(layer, QgsFeature(results[0].mFeature))
         else:
-            self.clicked.emit(mouseEvent.originalMapPoint())
+            self.identifiedNone.emit()
