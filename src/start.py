@@ -54,6 +54,7 @@ class Start:
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
+        self.identify_tool.identifiedNone.connect(self.onIdentifiedNone)
         self.buildActionListIdentifyTool()
 
     def buildActionListIdentifyTool(self):
@@ -157,6 +158,7 @@ class Start:
         elif self.application_settings.get_layers_route_segment_name() == selected_layer.sourceName():
             selected_type = self.application_settings.get_types_route_segment()
         else:
+            self.identifyHighlight.hide()
             return
 
         if self.identifyHighlight is not None:
@@ -176,3 +178,6 @@ class Start:
         if selected_type != "":
             self.identifyNetworkElementHandler.handle(mrid, selected_type)
 
+    def onIdentifiedNone(self):
+        if self.identifyHighlight is not None:
+            self.identifyHighlight.hide();
