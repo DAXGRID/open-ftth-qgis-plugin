@@ -36,6 +36,7 @@ class Start:
     def initGui(self):
         self.setupActions()
         self.iface.layerTreeView().currentLayerChanged.connect(self.layersLoaded)
+        self.iface.layerTreeView().currentLayerChanged.connect(self.layerSelectionChange)
 
     def setupActions(self):
         self.actions = []
@@ -129,10 +130,18 @@ class Start:
 
     def layersLoaded(self):
         if self.layers_loaded is False:
-            self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
-            self.route_segment_layer.selectionChanged.connect(self.onSelectedSegment)
             self.websocket.start()
             self.layers_loaded = True
+
+    def layerSelectionChange(self):
+        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
+
+        try:
+            self.route_segment_layer.selectionChanged.disconnect(self.onSelectedSegment)
+        except TypeError:
+            pass
+
+        self.route_segment_layer.selectionChanged.connect(self.onSelectedSegment)
 
     def connectAutosave(self):
         self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
