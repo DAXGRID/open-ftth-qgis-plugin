@@ -15,7 +15,7 @@ class HighlightFeaturesHandler:
             return
 
         for highlight in self.highlightFeatures:
-            highlight.hide()
+            self.iface.mapCanvas().scene().removeItem(highlight)
 
         self.highlightFeatures = []
 
