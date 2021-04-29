@@ -9,6 +9,7 @@ from .application_settings import ApplicationSettings
 from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
 from .events.retrieve_selected_handler import RetrieveSelectedHandler
+from .event_handler import EventHandler
 import webbrowser
 
 
@@ -18,8 +19,15 @@ class Start:
         self.autosave_enabled = False
         self.route_segment_layer = None
         self.route_node_layer = None
-        self.websocket = BridgeWebsocket(self.iface, self)
+        self.websocket = BridgeWebsocket(self.iface)
+
         self.identifyHighlight = None
+        self.last_identified_feature_mrid = None
+        self.last_identified_feature_type = None
+
+        self.event_handler = EventHandler(self.iface, self.websocket.websocket, self)
+        self.websocket.messageReceived.connect(self.event_handler.handle)
+
         self.identifyNetworkElementHandler = IdentifyNetworkElementHandler(self.websocket)
         self.retrieve_selected_handler = RetrieveSelectedHandler(self.iface, self.websocket)
         self.application_settings = ApplicationSettings()
