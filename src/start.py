@@ -1,7 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction
 from PyQt5.QtGui import QColor
-from qgis.core import QgsProject, Qgis
+from qgis.core import QgsProject, Qgis, QgsFeatureRequest
 from qgis.gui import QgsHighlight
 from .resources import *
 from .bridge_websocket import BridgeWebsocket
@@ -132,6 +132,10 @@ class Start:
         if self.layers_loaded is False:
             self.websocket.start()
             self.layers_loaded = True
+            self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
+            self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())[0]
+            self.route_node_layer.featuresDeleted.connect(self.checkFeaturesDeleted)
+            self.route_segment_layer.featuresDeleted.connect(self.checkFeaturesDeleted)
 
     def layerSelectionChange(self):
         self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
@@ -168,6 +172,29 @@ class Start:
         message = type('Expando', (object,), {'username': self.application_settings.get_user_name_prefix()})()
         self.retrieve_selected_handler.handle(message)
 
+    def checkFeaturesDeleted(self, fids):
+        if self.last_identified_feature_mrid is None:
+            return
+
+        features = None
+        filterExpression = f'"mrid" = \'{self.last_identified_feature_mrid}\''
+        if self.last_identified_feature_type == self.application_settings.get_types_route_node():
+            features = self.route_node_layer.getFeatures(QgsFeatureRequest().setFilterExpression(filterExpression))
+        elif self.last_identified_feature_type == self.application_settings.get_types_route_segment():
+            features = self.route_segment_layer.getFeatures(QgsFeatureRequest().setFilterExpression(filterExpression))
+        else:
+            return
+
+        # hack because the deleted signal is triggered on both create and delete
+        stillExists = False
+        for feature in features:
+            stillExists = True
+
+        if not stillExists:
+            self.onIdentifiedNone()
+            self.identifyNetworkElementHandler.handle(None, None)
+        # end of hack
+
     def onIdentified(self, selected_layer, selected_feature):
         selected_type = ""
         if self.application_settings.get_layers_route_node_name() == selected_layer.sourceName():
@@ -197,4 +224,6 @@ class Start:
 
     def onIdentifiedNone(self):
         if self.identifyHighlight is not None:
+            self.last_identified_feature_mrid = None
+            self.last_identified_feature_type = None
             self.identifyHighlight.hide();
