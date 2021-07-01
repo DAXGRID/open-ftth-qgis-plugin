@@ -1,6 +1,6 @@
 # Open Ftth - QGIS Plugin
 
-Open Ftth Plugin for QGIS (Currently under development)
+Open Ftth Plugin for QGIS
 
 ## Information
 
