@@ -129,6 +129,10 @@ class Start:
             self.disconnectAutosave()
 
     def layersLoaded(self):
+        if not self.hasCorrectLayers():
+            self.onIdentifiedNone()
+            return
+
         if self.layers_loaded is False:
             self.websocket.start()
             self.layers_loaded = True
@@ -138,14 +142,22 @@ class Start:
             self.route_segment_layer.featuresDeleted.connect(self.checkFeaturesDeleted)
 
     def layerSelectionChange(self):
-        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
+        if not self.hasCorrectLayers():
+            self.onIdentifiedNone()
+            return
 
+        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
         try:
             self.route_segment_layer.selectionChanged.disconnect(self.onSelectedSegment)
         except TypeError:
             pass
 
         self.route_segment_layer.selectionChanged.connect(self.onSelectedSegment)
+
+    def hasCorrectLayers(self):
+        route_segment_layers = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())
+        route_node_layers = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())
+        return len(route_segment_layers) > 0 and len(route_node_layers) > 0
 
     def connectAutosave(self):
         self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
