@@ -160,17 +160,35 @@ class Start:
         return len(route_segment_layers) > 0 and len(route_node_layers) > 0
 
     def connectAutosave(self):
-        self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
-        self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
+        # We do this to avoid plugin crash in case that connects come in an invalid state.
+        try:
+            self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
+            self.route_segment_layer.layerModified.connect(self.saveActiveLayerEdits)
+        except TypeError:
+            pass
 
-        self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())[0]
-        self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
+        # We do this to avoid plugin crash in case that connects come in an invalid state.
+        try:
+            self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())[0]
+            self.route_node_layer.layerModified.connect(self.saveActiveLayerEdits)
+        except TypeError:
+            pass
 
         self.autosave_enabled = True
 
     def disconnectAutosave(self):
-        self.route_segment_layer.layerModified.disconnect(self.saveActiveLayerEdits)
-        self.route_node_layer.layerModified.disconnect(self.saveActiveLayerEdits)
+        # We do this to avoid plugin crash in case that connects come in an invalid state.
+        try:
+            self.route_segment_layer.layerModified.disconnect(self.saveActiveLayerEdits)
+        except TypeError:
+            pass
+
+        # We do this to avoid plugin crash in case that connects come in an invalid state.
+        try:
+            self.route_node_layer.layerModified.disconnect(self.saveActiveLayerEdits)
+        except TypeError:
+            pass
+
         self.autosave_action.setChecked(False)
         self.autosave_enabled = False
 
