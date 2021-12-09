@@ -25,7 +25,7 @@ class EventHandler:
         deserializedObject = self.deserialize(message);
 
         if deserializedObject.eventType == "ObjectsWithinGeographicalAreaUpdated":
-            self.geographicalAreaUpdatedHandler.handle()
+            self.geographicalAreaUpdatedHandler.handle(deserializedObject)
         elif deserializedObject.eventType == "RetrieveSelected":
             self.getSelectedFeaturesHandler.handle(deserializedObject)
         elif deserializedObject.eventType == "PanToCoordinate":
