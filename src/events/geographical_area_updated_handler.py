@@ -13,24 +13,34 @@ class GeographicalAreaUpdatedHandler:
         if not self.zoom_close_enough():
             return
 
-        minX = message.envelope.minX
-        maxX = message.envelope.maxX
-        minY = message.envelope.minY
-        maxY = message.envelope.maxY
+        segmentLayers = QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_segment_name())
+        nodeLayers = QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_node_name())
 
-        segmentLayer = QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_segment_name())[0]
-        nodeLayer = QgsProject.instance().mapLayersByName(self.applicationSettings.get_layers_route_node_name())[0]
+        # In case that the layers are not loaded for the current project.
+        if len(segmentLayers) != 1 or len(nodeLayers) != 1:
+            return
 
-        extent = QgsRectangle(minX, minY, maxX, maxY)
-        if self.iface.mapCanvas().extent().intersects(extent):
-            # We only want to clear locators when the geoms changes.
-            # This is because the clear locators are an expensive operation.
+        segmentLayer = segmentLayers[0]
+        nodeLayer = nodeLayers[0]
+
+        if self.inside_extent(message):
+            # We only reload doing RouteNetworkUpdated message since this is an expensive operation
             if message.category == "RouteNetworkUpdated":
                 segmentLayer.reload()
                 nodeLayer.reload()
             else:
                 segmentLayer.triggerRepaint()
                 nodeLayer.triggerRepaint()
+
+    def inside_extent(self, message):
+        minX = message.envelope.minX
+        maxX = message.envelope.maxX
+        minY = message.envelope.minY
+        maxY = message.envelope.maxY
+
+        extent = QgsRectangle(minX, minY, maxX, maxY)
+
+        return self.iface.mapCanvas().extent().intersects(extent)
 
     def zoom_close_enough(self):
        return self.iface.mapCanvas().scale() < 1500
