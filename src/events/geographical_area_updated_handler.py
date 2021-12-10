@@ -28,10 +28,9 @@ class GeographicalAreaUpdatedHandler:
             if message.category == "RouteNetworkUpdated":
                 segmentLayer.reload()
                 nodeLayer.reload()
-                self.iface.mapCanvas().snappingUtils().clearAllLocators()
-
-            segmentLayer.triggerRepaint()
-            nodeLayer.triggerRepaint()
+            else:
+                segmentLayer.triggerRepaint()
+                nodeLayer.triggerRepaint()
 
     def zoom_close_enough(self):
        return self.iface.mapCanvas().scale() < 1500
