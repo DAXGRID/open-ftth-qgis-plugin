@@ -1,7 +1,7 @@
 from PyQt5 import QtGui
 from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction
 from PyQt5.QtGui import QColor
-from qgis.core import QgsProject, Qgis, QgsFeatureRequest
+from qgis.core import QgsProject, Qgis, QgsFeatureRequest, QgsVectorLayerUndoCommandDeleteFeature
 from qgis.gui import QgsHighlight
 from .resources import *
 from .bridge_websocket import BridgeWebsocket
@@ -112,6 +112,10 @@ class Start:
             self.disconnectSelectedFeatures()
             self.disconnectSelectTool()
             self.websocket.close()
+            self.route_segment_layer.beforeCommitChanges.disconnect(self.preCommitDeleteHandlerRouteSegment)
+            self.route_node_layer.beforeCommitChanges.disconnect(self.preCommitDeleteHandlerRouteNode)
+            self.route_node_layer.featuresDeleted.disconnect(self.checkFeaturesDeleted)
+            self.route_segment_layer.featuresDeleted.disconnect(self.checkFeaturesDeleted)
         except Exception:
             pass
 
@@ -138,8 +142,18 @@ class Start:
             self.layers_loaded = True
             self.route_segment_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_segment_name())[0]
             self.route_node_layer = QgsProject.instance().mapLayersByName(ApplicationSettings().get_layers_route_node_name())[0]
-            self.route_node_layer.featuresDeleted.connect(self.checkFeaturesDeleted)
-            self.route_segment_layer.featuresDeleted.connect(self.checkFeaturesDeleted)
+
+            try:
+                self.route_node_layer.featuresDeleted.connect(self.checkFeaturesDeleted)
+                self.route_segment_layer.featuresDeleted.connect(self.checkFeaturesDeleted)
+            except TypeError:
+                pass
+
+            try:
+                self.route_segment_layer.beforeCommitChanges.connect(self.preCommitDeleteHandlerRouteSegment)
+                self.route_node_layer.beforeCommitChanges.connect(self.preCommitDeleteHandlerRouteNode)
+            except TypeError:
+                pass
 
     def layerSelectionChange(self):
         if not self.hasCorrectLayers():
@@ -257,3 +271,26 @@ class Start:
             self.last_identified_feature_mrid = None
             self.last_identified_feature_type = None
             self.identifyHighlight.hide();
+
+    def preCommitDeleteHandlerRouteSegment(self):
+        self.undoDeleteSetMarkedToBeDeleted(ApplicationSettings().get_layers_route_segment_name())
+
+    def preCommitDeleteHandlerRouteNode(self):
+        self.undoDeleteSetMarkedToBeDeleted(ApplicationSettings().get_layers_route_node_name())
+
+    def undoDeleteSetMarkedToBeDeleted(self, layerName):
+        layers = QgsProject.instance().mapLayersByName(layerName)
+        if len(layers) != 1:
+            return
+        layer = layers[0]
+
+        deleted_features_ids = layer.editBuffer().deletedFeatureIds()
+        for feature_id in deleted_features_ids:
+            QgsVectorLayerUndoCommandDeleteFeature(layer.editBuffer(), feature_id).undo()
+
+        marked_to_be_deleted_idx = layer.fields().indexOf('marked_to_be_deleted')
+        user_name_idx = layer.fields().indexOf('user_name')
+        user_name = self.application_settings.get_user_name()
+        for feature in layer.dataProvider().getFeatures(QgsFeatureRequest().setFilterFids(deleted_features_ids)):
+            layer.changeAttributeValue(feature.id(), marked_to_be_deleted_idx, True)
+            layer.changeAttributeValue(feature.id(), user_name_idx, user_name)
