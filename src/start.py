@@ -309,6 +309,12 @@ class Start:
 
     def pasteGeometry(self):
         layer = self.iface.activeLayer()
+
+        route_segment_layer_name = self.application_settings.get_layers_route_segment_name();
+        if layer.sourceName() != route_segment_layer_name:
+            self.showBarMessage("You can only paste a geometry when layer %s is selected." % route_segment_layer_name, Qgis.Warning)
+            return
+
         if not layer.isEditable():
             self.showBarMessage("You need to be in edit mode to paste the geometry.", Qgis.Warning)
             return
