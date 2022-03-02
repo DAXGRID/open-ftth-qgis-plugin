@@ -2,7 +2,7 @@ from PyQt5 import QtGui
 from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction, QApplication
 from PyQt5.QtGui import QColor
 from qgis.core import QgsProject, Qgis, QgsFeatureRequest, QgsVectorLayerUndoCommandDeleteFeature, QgsMessageLog, QgsGeometry
-from qgis.gui import QgsHighlight
+from qgis.gui import QgsHighlight, QgsMessageBar
 from io import StringIO
 
 from .resources import *
@@ -308,30 +308,24 @@ class Start:
             layer.changeAttributeValue(feature.id(), user_name_idx, user_name)
 
     def pasteGeometry(self):
+        layer = self.iface.activeLayer()
+        if not layer.isEditable():
+            self.showBarMessage("You need to be in edit mode to paste the geometry.", Qgis.Warning)
+            return
+
         geoms = self.tryGetFeaturesGeomsFromClipBoard()
         if len(geoms) > 1:
-            QgsMessageLog.logMessage(
-                "Can't paste geometry multiple features in clipboard.",
-                self.name,
-                Qgis.Critical)
+            self.showBarMessage("Can't paste geometry multiple features in clipboard.", Qgis.Warning)
             return
 
         if len(geoms) == 0:
-            QgsMessageLog.logMessage(
-                "Can't paste geometry. No features in clipboard.",
-                self.name,
-                Qgis.Critical)
+            self.showBarMessage("Can't paste geometry. No features in clipboard.", Qgis.Warning)
             return
 
-        layer = self.iface.activeLayer()
         selected_features = layer.selectedFeatures()
 
         if len(selected_features) == 0:
-            QgsMessageLog.logMessage(
-                "Can't paste. No target feature to paste to.",
-                self.name,
-                Qgis.Critical
-            )
+            self.showBarMessage("Can't paste. No target feature to paste to.", Qgis.Warning)
             return
 
         paste_feature = selected_features[0]
@@ -339,11 +333,7 @@ class Start:
         copy_geom = geoms[0]
 
         if paste_geom.type() != copy_geom.type():
-            QgsMessageLog.logMessage(
-                "Not the same geometry type. From %s to %s" % (copy_geom.type(), paste_geom.type()),
-                self.name,
-                Qgis.Critical
-            )
+            self.showBarMessage("Not the same geometry type. From %s to %s" % (copy_geom.type(), paste_geom.type()), Qgis.Warning)
             return
 
         paste_geom_start = paste_geom.asPolyline()[0]
@@ -357,17 +347,13 @@ class Start:
 
         if start_to_start_distance > start_to_end_distance:
             # Then we reverse the geometry
-            QgsMessageLog.logMessage("The geometries are flipped, we flip it.", self.name, Qgis.Info)
+            QgsMessageLog.logMessage("The geometries are flipped, we reverse them for the copy.", self.name, Qgis.Info)
             new_copy_geom.reverse()
 
         result = layer.changeGeometry(paste_feature.id(), QgsGeometry.fromPolylineXY(new_copy_geom))
 
         if not result:
-            QgsMessageLog.logMessage(
-                "Can't paste geometry, something went wrong.",
-                self.name,
-                Qgis.Critical
-            )
+            self.showBarMessage("Can't paste geometry, something went wrong.", Qgis.Critical)
             return
 
         self.iface.mapCanvas().refresh()
@@ -389,12 +375,11 @@ class Start:
             geom = QgsGeometry.fromWkt(wkt_geom)
 
             if not geom:
-                QgsMessageLog.logMessage(
-                    'Can\'t create geometry from wkt: %s' % wkt_geom,
-                    self.name,
-                    Qgis.Critical
-                )
-                continue
+                self.showBarMessage('Can\'t create geometry from wkt: %s' % wkt_geom, Qgis.Critical)
+                return []
 
             geoms.append(geom)
         return geoms
+
+    def showBarMessage(self, message, level=Qgis.Info, duration=-1):
+        self.iface.messageBar().pushMessage("Error", message, level=level, duration=duration)
