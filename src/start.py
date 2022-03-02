@@ -334,18 +334,33 @@ class Start:
             )
             return
 
-        geom = geoms[0]
-        feature = selected_features[0]
+        paste_feature = selected_features[0]
+        paste_geom = paste_feature.geometry()
+        copy_geom = geoms[0]
 
-        if feature.geometry().type() != geom.type():
+        if paste_geom.type() != copy_geom.type():
             QgsMessageLog.logMessage(
-                "Not the same geometry type. From %s to %s" % (geom.type(), feature.geometry().type()),
+                "Not the same geometry type. From %s to %s" % (copy_geom.type(), paste_geom.type()),
                 self.name,
                 Qgis.Critical
             )
             return
 
-        result = layer.changeGeometry(feature.id(), geom)
+        paste_geom_start = paste_geom.asPolyline()[0]
+        copy_geom_start = copy_geom.asPolyline()[0]
+        copy_geom_end = copy_geom.asPolyline()[len(copy_geom.asPolyline()) - 1]
+
+        start_to_start_distance = paste_geom_start.distance(copy_geom_start)
+        start_to_end_distance = paste_geom_start.distance(copy_geom_end)
+
+        new_copy_geom = copy_geom.asPolyline()
+
+        if start_to_start_distance > start_to_end_distance:
+            # Then we reverse the geometry
+            QgsMessageLog.logMessage("The geometries are flipped, we flip it.", self.name, Qgis.Info)
+            new_copy_geom.reverse()
+
+        result = layer.changeGeometry(paste_feature.id(), QgsGeometry.fromPolylineXY(new_copy_geom))
 
         if not result:
             QgsMessageLog.logMessage(
