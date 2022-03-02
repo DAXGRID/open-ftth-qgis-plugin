@@ -62,16 +62,16 @@ class Start:
         self.web_browser_action.setCheckable(False)
         self.web_browser_action.triggered.connect(self.connectWebBrowser)
 
-        copy_geometry = ":/plugins/open_ftth/copy_geometry.svg"
-        self.copy_geometry_action = QAction(QtGui.QIcon(copy_geometry), "Copy geometry", self.iface.mainWindow())
-        self.copy_geometry_action.setCheckable(False)
-        self.copy_geometry_action.triggered.connect(self.pasteGeometry)
+        paste_geometry = ":/plugins/open_ftth/paste_geometry.svg"
+        self.paste_geometry_action = QAction(QtGui.QIcon(paste_geometry), "Paste geometry", self.iface.mainWindow())
+        self.paste_geometry_action.setCheckable(False)
+        self.paste_geometry_action.triggered.connect(self.pasteGeometry)
 
         self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
         self.iface.addToolBarIcon(self.web_browser_action)
-        self.iface.addToolBarIcon(self.copy_geometry_action);
+        self.iface.addToolBarIcon(self.paste_geometry_action);
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
