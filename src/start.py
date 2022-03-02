@@ -373,7 +373,12 @@ class Start:
             self.showBarMessage("End points distance is bigger than tolerance.", Qgis.Critical)
             return
 
+        # We update the geometry.
         result = layer.changeGeometry(paste_feature.id(), QgsGeometry.fromPolylineXY(new_copy_polyline))
+
+        # We change the mapping method to LandSurveying to identify that the polyline now matches the landsurvey polyline.
+        mapping_method_idx = layer.fields().indexOf('mapping_method')
+        layer.changeAttributeValue(paste_feature.id(), mapping_method_idx, "LandSurveying")
 
         if not result:
             self.showBarMessage("Can't paste geometry, something went wrong.", Qgis.Critical)
