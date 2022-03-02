@@ -26,6 +26,9 @@ class ApplicationSettings:
     def get_types_route_node(self):
         return self.configuration.get('types', 'routenode')
 
+    def get_tolerance(self):
+        return float(self.configuration.get('global', 'tolerance'))
+
     def get_user_name(self):
         return getpass.getuser().lower()
 

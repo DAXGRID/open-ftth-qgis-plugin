@@ -334,8 +334,11 @@ class Start:
             self.showBarMessage("Can't paste. No target feature to paste to.", Qgis.Warning)
             return
 
+        # Paste is the comment we want to paste to
         paste_feature = selected_features[0]
         paste_geom = paste_feature.geometry()
+
+        # Copy is the geom from the clipboard that we want "paste" to resemble.
         copy_geom = geoms[0]
 
         if paste_geom.type() != copy_geom.type():
@@ -343,20 +346,34 @@ class Start:
             return
 
         paste_geom_start = paste_geom.asPolyline()[0]
+        paste_geom_end = paste_geom.asPolyline()[len(paste_geom.asPolyline()) - 1]
         copy_geom_start = copy_geom.asPolyline()[0]
         copy_geom_end = copy_geom.asPolyline()[len(copy_geom.asPolyline()) - 1]
 
         start_to_start_distance = paste_geom_start.distance(copy_geom_start)
         start_to_end_distance = paste_geom_start.distance(copy_geom_end)
 
-        new_copy_geom = copy_geom.asPolyline()
+        new_copy_polyline = copy_geom.asPolyline()
 
         if start_to_start_distance > start_to_end_distance:
-            # Then we reverse the geometry
             QgsMessageLog.logMessage("The geometries are flipped, we reverse them for the copy.", self.name, Qgis.Info)
-            new_copy_geom.reverse()
+            new_copy_polyline.reverse()
 
-        result = layer.changeGeometry(paste_feature.id(), QgsGeometry.fromPolylineXY(new_copy_geom))
+        # Its important that we do this after, in case that the geometry is reversed.
+        new_copy_geom_start = new_copy_polyline[0]
+        new_copy_geom_end = new_copy_polyline[len(new_copy_polyline) - 1]
+
+        new_start_to_start_distance = paste_geom_start.distance(new_copy_geom_start)
+        if self.application_settings.get_tolerance() < new_start_to_start_distance:
+            self.showBarMessage("Start point distance is bigger than tolerance.", Qgis.Critical)
+            return
+
+        new_start_to_end_distance = paste_geom_end.distance(new_copy_geom_end)
+        if self.application_settings.get_tolerance() < new_start_to_end_distance:
+            self.showBarMessage("End points distance is bigger than tolerance.", Qgis.Critical)
+            return
+
+        result = layer.changeGeometry(paste_feature.id(), QgsGeometry.fromPolylineXY(new_copy_polyline))
 
         if not result:
             self.showBarMessage("Can't paste geometry, something went wrong.", Qgis.Critical)
