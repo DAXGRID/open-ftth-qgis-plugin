@@ -1,8 +1,10 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction
+from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction, QApplication
 from PyQt5.QtGui import QColor
-from qgis.core import QgsProject, Qgis, QgsFeatureRequest, QgsVectorLayerUndoCommandDeleteFeature
+from qgis.core import QgsProject, Qgis, QgsFeatureRequest, QgsVectorLayerUndoCommandDeleteFeature, QgsMessageLog, QgsGeometry
 from qgis.gui import QgsHighlight
+from io import StringIO
+
 from .resources import *
 from .bridge_websocket import BridgeWebsocket
 from .application_settings import ApplicationSettings
@@ -10,11 +12,15 @@ from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
 from .events.retrieve_selected_handler import RetrieveSelectedHandler
 from .event_handler import EventHandler
+
 import webbrowser
+import sys
+import csv
 
 
 class Start:
     def __init__(self, iface):
+        self.name = "OPEN_FTTH"
         self.iface = iface
         self.autosave_enabled = False
         self.route_segment_layer = None
@@ -42,24 +48,30 @@ class Start:
         self.actions = []
 
         icon_auto_save = ":/plugins/open_ftth/auto_save.svg"
-        auto_identify = ":/plugins/open_ftth/auto_identify.svg"
-        web_browser = ":/plugins/open_ftth/browser_icon.svg"
         self.autosave_action = QAction(QtGui.QIcon(icon_auto_save), "Autosave", self.iface.mainWindow())
         self.autosave_action.setCheckable(True)
         self.autosave_action.triggered.connect(self.setupAutoSave)
 
+        auto_identify = ":/plugins/open_ftth/auto_identify.svg"
         self.select_action = QAction(QtGui.QIcon(auto_identify), "Select", self.iface.mainWindow())
         self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
+        web_browser = ":/plugins/open_ftth/browser_icon.svg"
         self.web_browser_action = QAction(QtGui.QIcon(web_browser), "Web-browser", self.iface.mainWindow())
         self.web_browser_action.setCheckable(False)
         self.web_browser_action.triggered.connect(self.connectWebBrowser)
+
+        copy_geometry = ":/plugins/open_ftth/copy_geometry.svg"
+        self.copy_geometry_action = QAction(QtGui.QIcon(copy_geometry), "Copy geometry", self.iface.mainWindow())
+        self.copy_geometry_action.setCheckable(False)
+        self.copy_geometry_action.triggered.connect(self.pasteGeometry)
 
         self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
         self.iface.addToolBarIcon(self.web_browser_action)
+        self.iface.addToolBarIcon(self.copy_geometry_action);
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
@@ -294,3 +306,80 @@ class Start:
         for feature in layer.dataProvider().getFeatures(QgsFeatureRequest().setFilterFids(deleted_features_ids)):
             layer.changeAttributeValue(feature.id(), marked_to_be_deleted_idx, True)
             layer.changeAttributeValue(feature.id(), user_name_idx, user_name)
+
+    def pasteGeometry(self):
+        geoms = self.tryGetFeaturesGeomsFromClipBoard()
+        if len(geoms) > 1:
+            QgsMessageLog.logMessage(
+                "Can't paste geometry multiple features in clipboard.",
+                self.name,
+                Qgis.Critical)
+            return
+
+        if len(geoms) == 0:
+            QgsMessageLog.logMessage(
+                "Can't paste geometry. No features in clipboard.",
+                self.name,
+                Qgis.Critical)
+            return
+
+        layer = self.iface.activeLayer()
+        selected_features = layer.selectedFeatures()
+
+        if len(selected_features) == 0:
+            QgsMessageLog.logMessage(
+                "Can't paste. No target feature to paste to.",
+                self.name,
+                Qgis.Critical
+            )
+            return
+
+        geom = geoms[0]
+        feature = selected_features[0]
+
+        if feature.geometry().type() != geom.type():
+            QgsMessageLog.logMessage(
+                "Not the same geometry type. From %s to %s" % (geom.type(), feature.geometry().type()),
+                self.name,
+                Qgis.Critical
+            )
+            return
+
+        result = layer.changeGeometry(feature.id(), geom)
+
+        if not result:
+            QgsMessageLog.logMessage(
+                "Can't paste geometry, something went wrong.",
+                self.name,
+                Qgis.Critical
+            )
+            return
+
+        self.iface.mapCanvas().refresh()
+
+    def tryGetFeaturesGeomsFromClipBoard(self):
+        cb = QApplication.clipboard()
+        clipboard_text = cb.text()
+        if sys.version_info[0] == 2:
+            clipboard_text = clipboard_text.encode('utf-8')
+
+        reader = csv.DictReader(
+            StringIO(clipboard_text),
+            delimiter='\t'
+        )
+
+        geoms = []
+        for row in reader:
+            wkt_geom = row.get('wkt_geom')
+            geom = QgsGeometry.fromWkt(wkt_geom)
+
+            if not geom:
+                QgsMessageLog.logMessage(
+                    'Can\'t create geometry from wkt: %s' % wkt_geom,
+                    self.name,
+                    Qgis.Critical
+                )
+                continue
+
+            geoms.append(geom)
+        return geoms
