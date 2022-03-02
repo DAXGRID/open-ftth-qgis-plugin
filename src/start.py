@@ -364,10 +364,7 @@ class Start:
         if sys.version_info[0] == 2:
             clipboard_text = clipboard_text.encode('utf-8')
 
-        reader = csv.DictReader(
-            StringIO(clipboard_text),
-            delimiter='\t'
-        )
+        reader = csv.DictReader(StringIO(clipboard_text), delimiter='\t')
 
         geoms = []
         for row in reader:
