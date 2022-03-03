@@ -1,8 +1,10 @@
 from PyQt5 import QtGui
-from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction
+from PyQt5.QtWidgets import QAction, QActionGroup, QWidgetAction, QApplication
 from PyQt5.QtGui import QColor
-from qgis.core import QgsProject, Qgis, QgsFeatureRequest, QgsVectorLayerUndoCommandDeleteFeature
-from qgis.gui import QgsHighlight
+from qgis.core import QgsProject, Qgis, QgsFeatureRequest, QgsVectorLayerUndoCommandDeleteFeature, QgsMessageLog, QgsGeometry
+from qgis.gui import QgsHighlight, QgsMessageBar
+from io import StringIO
+
 from .resources import *
 from .bridge_websocket import BridgeWebsocket
 from .application_settings import ApplicationSettings
@@ -10,11 +12,15 @@ from .identify_select import IdentifySelect
 from .events.identify_network_element_handler import IdentifyNetworkElementHandler
 from .events.retrieve_selected_handler import RetrieveSelectedHandler
 from .event_handler import EventHandler
+
 import webbrowser
+import sys
+import csv
 
 
 class Start:
     def __init__(self, iface):
+        self.name = "OPEN_FTTH"
         self.iface = iface
         self.autosave_enabled = False
         self.route_segment_layer = None
@@ -42,24 +48,30 @@ class Start:
         self.actions = []
 
         icon_auto_save = ":/plugins/open_ftth/auto_save.svg"
-        auto_identify = ":/plugins/open_ftth/auto_identify.svg"
-        web_browser = ":/plugins/open_ftth/browser_icon.svg"
         self.autosave_action = QAction(QtGui.QIcon(icon_auto_save), "Autosave", self.iface.mainWindow())
         self.autosave_action.setCheckable(True)
         self.autosave_action.triggered.connect(self.setupAutoSave)
 
+        auto_identify = ":/plugins/open_ftth/auto_identify.svg"
         self.select_action = QAction(QtGui.QIcon(auto_identify), "Select", self.iface.mainWindow())
         self.select_action.setCheckable(True)
         self.select_action.triggered.connect(self.setupSelectTool);
 
+        web_browser = ":/plugins/open_ftth/browser_icon.svg"
         self.web_browser_action = QAction(QtGui.QIcon(web_browser), "Web-browser", self.iface.mainWindow())
         self.web_browser_action.setCheckable(False)
         self.web_browser_action.triggered.connect(self.connectWebBrowser)
+
+        paste_geometry = ":/plugins/open_ftth/paste_geometry.svg"
+        self.paste_geometry_action = QAction(QtGui.QIcon(paste_geometry), "Paste geometry", self.iface.mainWindow())
+        self.paste_geometry_action.setCheckable(False)
+        self.paste_geometry_action.triggered.connect(self.pasteGeometry)
 
         self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
         self.iface.addToolBarIcon(self.web_browser_action)
+        self.iface.addToolBarIcon(self.paste_geometry_action);
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
@@ -294,3 +306,105 @@ class Start:
         for feature in layer.dataProvider().getFeatures(QgsFeatureRequest().setFilterFids(deleted_features_ids)):
             layer.changeAttributeValue(feature.id(), marked_to_be_deleted_idx, True)
             layer.changeAttributeValue(feature.id(), user_name_idx, user_name)
+
+    def pasteGeometry(self):
+        layer = self.iface.activeLayer()
+
+        route_segment_layer_name = self.application_settings.get_layers_route_segment_name();
+        if layer.sourceName() != route_segment_layer_name:
+            self.showBarMessage("You can only paste a geometry when layer %s is selected." % route_segment_layer_name, Qgis.Warning)
+            return
+
+        if not layer.isEditable():
+            self.showBarMessage("You need to be in edit mode to paste the geometry.", Qgis.Warning)
+            return
+
+        geoms = self.tryGetFeaturesGeomsFromClipBoard()
+        if len(geoms) > 1:
+            self.showBarMessage("Can't paste geometry multiple features in clipboard.", Qgis.Warning)
+            return
+
+        if len(geoms) == 0:
+            self.showBarMessage("Can't paste geometry. No features in clipboard.", Qgis.Warning)
+            return
+
+        selected_features = layer.selectedFeatures()
+
+        if len(selected_features) == 0:
+            self.showBarMessage("Can't paste. No target feature to paste to.", Qgis.Warning)
+            return
+
+        # Paste is the comment we want to paste to
+        paste_feature = selected_features[0]
+        paste_geom = paste_feature.geometry()
+
+        # Copy is the geom from the clipboard that we want "paste" to resemble.
+        copy_geom = geoms[0]
+
+        if paste_geom.type() != copy_geom.type():
+            self.showBarMessage("Not the same geometry type. From %s to %s" % (copy_geom.type(), paste_geom.type()), Qgis.Warning)
+            return
+
+        paste_geom_start = paste_geom.asPolyline()[0]
+        paste_geom_end = paste_geom.asPolyline()[len(paste_geom.asPolyline()) - 1]
+        copy_geom_start = copy_geom.asPolyline()[0]
+        copy_geom_end = copy_geom.asPolyline()[len(copy_geom.asPolyline()) - 1]
+
+        start_to_start_distance = paste_geom_start.distance(copy_geom_start)
+        start_to_end_distance = paste_geom_start.distance(copy_geom_end)
+
+        new_copy_polyline = copy_geom.asPolyline()
+
+        if start_to_start_distance > start_to_end_distance:
+            QgsMessageLog.logMessage("The geometries are flipped, we reverse them for the copy.", self.name, Qgis.Info)
+            new_copy_polyline.reverse()
+
+        # Its important that we do this after, in case that the geometry is reversed.
+        new_copy_geom_start = new_copy_polyline[0]
+        new_copy_geom_end = new_copy_polyline[len(new_copy_polyline) - 1]
+
+        new_start_to_start_distance = paste_geom_start.distance(new_copy_geom_start)
+        if self.application_settings.get_tolerance() < new_start_to_start_distance:
+            self.showBarMessage("Start point distance is bigger than tolerance.", Qgis.Critical)
+            return
+
+        new_start_to_end_distance = paste_geom_end.distance(new_copy_geom_end)
+        if self.application_settings.get_tolerance() < new_start_to_end_distance:
+            self.showBarMessage("End points distance is bigger than tolerance.", Qgis.Critical)
+            return
+
+        # We update the geometry.
+        result = layer.changeGeometry(paste_feature.id(), QgsGeometry.fromPolylineXY(new_copy_polyline))
+
+        # We change the mapping method to LandSurveying to identify that the polyline now matches the landsurvey polyline.
+        mapping_method_idx = layer.fields().indexOf('mapping_method')
+        layer.changeAttributeValue(paste_feature.id(), mapping_method_idx, "LandSurveying")
+
+        if not result:
+            self.showBarMessage("Can't paste geometry, something went wrong.", Qgis.Critical)
+            return
+
+        self.iface.mapCanvas().refresh()
+
+    def tryGetFeaturesGeomsFromClipBoard(self):
+        cb = QApplication.clipboard()
+        clipboard_text = cb.text()
+        if sys.version_info[0] == 2:
+            clipboard_text = clipboard_text.encode('utf-8')
+
+        reader = csv.DictReader(StringIO(clipboard_text), delimiter='\t')
+
+        geoms = []
+        for row in reader:
+            wkt_geom = row.get('wkt_geom')
+            geom = QgsGeometry.fromWkt(wkt_geom)
+
+            if not geom:
+                self.showBarMessage('Can\'t create geometry from wkt: %s' % wkt_geom, Qgis.Critical)
+                return []
+
+            geoms.append(geom)
+        return geoms
+
+    def showBarMessage(self, message, level=Qgis.Info, duration=-1):
+        self.iface.messageBar().pushMessage("Error", message, level=level, duration=duration)
