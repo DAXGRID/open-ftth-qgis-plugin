@@ -328,7 +328,10 @@ class Start:
             self.showBarMessage("Can't paste geometry. No features in clipboard.", Qgis.Warning)
             return
 
-        selected_features = layer.selectedFeatures()
+        selected_features_iter = layer.getSelectedFeatures()
+        selected_features = []
+        for selected_feature in selected_features_iter:
+            selected_features.append(selected_feature)
 
         if len(selected_features) == 0:
             self.showBarMessage("Can't paste. No target feature to paste to.", Qgis.Warning)
