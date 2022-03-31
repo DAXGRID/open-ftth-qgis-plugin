@@ -14,7 +14,7 @@ class RetrieveSelectedHandler:
         if message.username != self.settings.get_user_name_prefix():
             return
 
-        selected_features = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())[0].selectedFeatures()
+        selected_features = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())[0].getSelectedFeatures()
 
         selected_features_mrids = []
         for selected_feature in selected_features:
