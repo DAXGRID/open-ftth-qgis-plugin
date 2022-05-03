@@ -1,6 +1,6 @@
 from qgis.gui import QgsHighlight
 from PyQt5.QtGui import QColor
-from qgis.core import QgsProject, QgsFeatureRequest
+from qgis.core import QgsProject, QgsFeatureRequest, QgsRectangle
 from ..application_settings import ApplicationSettings
 
 
@@ -21,6 +21,11 @@ class HighlightFeaturesHandler:
 
         if len(message.identifiedFeatureMrids) == 0:
             return
+
+        # If it has an etrs89 extend we set that extend before highlighting.
+        if (hasattr(message, "etrs89") and message.etrs89 is not None):
+            newRect = QgsRectangle(message.etrs89.minX, message.etrs89.minY, message.etrs89.maxX, message.etrs89.maxY)
+            self.iface.mapCanvas().setExtent(newRect)
 
         layer = None
         if message.featureType == self.settings.get_types_route_segment():
