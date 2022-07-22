@@ -225,7 +225,7 @@ class Start:
         self.iface.actionSaveActiveLayerEdits().trigger()
 
     def onSelectedSegment(self):
-        message = type('Expando', (object,), {'username': self.application_settings.get_user_name_prefix()})()
+        message = type('Expando', (object,), {'username': self.application_settings.get_user_name_suffix()})()
         self.retrieve_selected_handler.handle(message)
 
     def checkFeaturesDeleted(self, fids):
@@ -301,11 +301,8 @@ class Start:
             QgsVectorLayerUndoCommandDeleteFeature(layer.editBuffer(), feature_id).undo()
 
         marked_to_be_deleted_idx = layer.fields().indexOf('marked_to_be_deleted')
-        user_name_idx = layer.fields().indexOf('user_name')
-        user_name = self.application_settings.get_user_name()
         for feature in layer.dataProvider().getFeatures(QgsFeatureRequest().setFilterFids(deleted_features_ids)):
             layer.changeAttributeValue(feature.id(), marked_to_be_deleted_idx, True)
-            layer.changeAttributeValue(feature.id(), user_name_idx, user_name)
 
     def pasteGeometry(self):
         layer = self.iface.activeLayer()

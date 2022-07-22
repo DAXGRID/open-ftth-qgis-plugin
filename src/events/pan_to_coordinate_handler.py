@@ -9,7 +9,7 @@ class PanToCoordinateHandler:
         self.settings = ApplicationSettings()
 
     def handle(self, message):
-        if message.username != self.settings.get_user_name_prefix():
+        if message.username != self.settings.get_user_name_suffix():
             return
 
         x = message.coordinate[0]

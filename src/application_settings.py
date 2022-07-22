@@ -32,5 +32,5 @@ class ApplicationSettings:
     def get_user_name(self):
         return getpass.getuser().lower()
 
-    def get_user_name_prefix(self):
-        return getpass.getuser().lower() + self.configuration.get('user', 'prefix')
+    def get_user_name_suffix(self):
+        return getpass.getuser().lower() + self.configuration.get('user', 'suffix')
