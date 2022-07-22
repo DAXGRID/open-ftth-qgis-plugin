@@ -11,7 +11,7 @@ class RetrieveSelectedHandler:
         self.settings = ApplicationSettings()
 
     def handle(self, message):
-        if message.username != self.settings.get_user_name_prefix():
+        if message.username != self.settings.get_user_name_suffix():
             return
 
         selected_features = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())[0].getSelectedFeatures()
@@ -24,7 +24,7 @@ class RetrieveSelectedHandler:
         response = {
             "eventType": "RetrieveSelectedResponse",
             "selectedFeaturesMrid": selected_features_mrids,
-            "username": self.settings.get_user_name_prefix()
+            "username": self.settings.get_user_name_suffix()
         }
 
         self.websocket.send(json.dumps(response))

@@ -13,7 +13,7 @@ class IdentifyNetworkElementHandler:
             "eventType": "IdentifyNetworkElement",
             "identifiedFeatureId": identified_feature_id,
             "selectedType": selected_type,
-            "username": self.settings.get_user_name_prefix()
+            "username": self.settings.get_user_name_suffix()
         }
 
         self.websocket.send(json.dumps(response))

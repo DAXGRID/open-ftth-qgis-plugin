@@ -11,7 +11,7 @@ class HighlightFeaturesHandler:
         self.highlightFeatures = []
 
     def handle(self, message):
-        if message.username != self.settings.get_user_name_prefix():
+        if message.username != self.settings.get_user_name_suffix():
             return
 
         for highlight in self.highlightFeatures:

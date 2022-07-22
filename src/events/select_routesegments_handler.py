@@ -11,7 +11,7 @@ class SelectRouteSegmentsHandler:
         self.highlightFeatures = []
 
     def handle(self, message):
-        if message.username != self.settings.get_user_name_prefix():
+        if message.username != self.settings.get_user_name_suffix():
             return
 
         layer = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())[0]
