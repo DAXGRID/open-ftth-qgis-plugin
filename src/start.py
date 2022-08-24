@@ -201,6 +201,7 @@ class Start:
             pass
 
         self.autosave_enabled = True
+        self.currently_saving = False
 
     def disconnectAutosave(self):
         # We do this to avoid plugin crash in case that connects come in an invalid state.
@@ -217,12 +218,20 @@ class Start:
 
         self.autosave_action.setChecked(False)
         self.autosave_enabled = False
+        self.currently_saving = False
 
     def connectWebBrowser(self):
         webbrowser.open(self.application_settings.get_website_url(), new=2)
 
     def saveActiveLayerEdits(self):
-        self.iface.actionSaveActiveLayerEdits().trigger()
+        # This is a hack, triggering an auto-save might trigger
+        # precommit signals that edit state that might trigger another
+        # auto-save that triggers the precommit signals and so on, again and again
+        # to avoid this we sat a boolean flag to only do one save.
+        if not self.currently_saving:
+            self.currently_saving = True
+            self.iface.actionSaveActiveLayerEdits().trigger()
+            self.currently_saving = False
 
     def onSelectedSegment(self):
         message = type('Expando', (object,), {'username': self.application_settings.get_user_name_suffix()})()
