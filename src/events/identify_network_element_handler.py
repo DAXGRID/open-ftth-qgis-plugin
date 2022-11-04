@@ -17,3 +17,11 @@ class IdentifyNetworkElementHandler:
         }
 
         self.websocket.send(json.dumps(response))
+
+    # This is made to handle 'RetrieveIdentifiedNetworkElement' message-request
+    # and that contains a username, and only that username wants the identified-feature.
+    def handle_message(self, identified_feature_id, selected_type, message):
+        if message.username != self.settings.get_user_name_suffix():
+            return
+
+        self.handle(identified_feature_id, selected_type)
