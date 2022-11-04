@@ -33,7 +33,7 @@ class EventHandler:
         elif deserializedObject.eventType == "HighlightFeatures":
             self.highlightFeaturesHandler.handle(deserializedObject)
         elif deserializedObject.eventType == "RetrieveIdentifiedNetworkElement":
-            self.identify_networkwork_element_handler.handle(self.app_state.last_identified_feature_mrid, self.app_state.last_identified_feature_type)
+            self.identify_networkwork_element_handler.handle_message(self.app_state.last_identified_feature_mrid, self.app_state.last_identified_feature_type, deserializedObject)
         elif deserializedObject.eventType == "SelectRouteSegments":
             self.select_routesegments_handler.handle(deserializedObject)
 
