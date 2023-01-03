@@ -1,12 +1,8 @@
-# Open Ftth - QGIS Plugin
+# OpenFTTH - QGIS Plugin
 
-Open Ftth Plugin for QGIS
+This plugin is an integral part of the full OpenFTTH system and requires the system to function. Its primary purpose is to facilitate communication with the OpenFTTH system.
 
-## Information
-
-* This plugin is part of the full OpenFTTH system, to work it requires that system to run. It's only purpose is to communicate with the OpenFTTH system, therefore not a lot of functionality is built into the plugin.
-
-* If you're interested in hearing more or have any question please contact us or open an issue with your question.
+As the system is currently being developed, there is not yet a large amount of documentation available. However, if you have any questions or would like to learn more, please feel free to reach out to us.
 
 ## Dependencies
 
