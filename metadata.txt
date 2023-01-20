@@ -1,10 +1,10 @@
 [general]
 name=open-ftth
 description=OPENFTTH QGIS Plugin
-about=
+about=Facilitate communication with the OpenFTTH system.
 version=1.0
 qgisMinimumVersion=3.0
-author=Rune Andreas Nielsen
+author=DAX ApS
 email=admin@dax.dk
 homepage=https://github.com/DAXGRID/open-ftth-qgis-plugin
 category=Plugins
