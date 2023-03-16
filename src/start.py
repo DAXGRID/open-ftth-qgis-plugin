@@ -67,11 +67,17 @@ class Start:
         self.paste_geometry_action.setCheckable(False)
         self.paste_geometry_action.triggered.connect(self.pasteGeometry)
 
+        paste_attributes = ":/plugins/open_ftth/paste_attributes.svg"
+        self.paste_attributes_action = QAction(QtGui.QIcon(paste_attributes), "Paste attributes", self.iface.mainWindow())
+        self.paste_attributes_action.setCheckable(False)
+        self.paste_attributes_action.triggered.connect(self.pasteAttributes)
+
         self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
         self.iface.addToolBarIcon(self.web_browser_action)
         self.iface.addToolBarIcon(self.paste_geometry_action);
+        self.iface.addToolBarIcon(self.paste_attributes_action);
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
@@ -394,6 +400,68 @@ class Start:
             return
 
         self.iface.mapCanvas().refresh()
+
+    def pasteAttributes(self):
+        layer = self.iface.activeLayer()
+
+        if not layer:
+            self.showBarMessage('Could not find active layer.', Qgis.Critical)
+            return
+
+        if not layer.isEditable():
+            self.showBarMessage("You need to be in edit mode to paste the attributes.", Qgis.Warning)
+            return
+
+        selected_features = list(layer.getSelectedFeatures())
+
+        if len(selected_features) > 1:
+            self.showBarMessage('You cannot copy and paste attributes for multiple features at one time.', Qgis.Warning)
+            return
+
+        paste_feature = selected_features[0]
+
+        cb = QApplication.clipboard()
+        clipboard_text = cb.text()
+
+        if clipboard_text == "":
+            self.showBarMessage('The clipboard is empty. Please copy a feature.', Qgis.Warning)
+            return
+
+        reader = csv.DictReader(StringIO(clipboard_text), delimiter='\t')
+
+        if not reader :
+            self.showBarMessage('Could not create clipboard reader.', Qgis.Critical)
+            return
+
+        rows = list(reader)
+        row_count = len(rows)
+
+        if row_count < 0:
+            self.showBarMessage('You need to copy at least one feature.', Qgis.Warning)
+            return
+
+        if row_count > 1:
+            self.showBarMessage('You cannot copy and paste attributes for multiple features at one time.', Qgis.Warning)
+            return
+
+        # List of fieldnames to exclude
+        exclude_fields = ['wkt_geom', 'mrid', 'user_name', 'delete_me', 'marked_to_be_deleted']
+
+        for row in rows:
+            for field_name in reader.fieldnames:
+                if field_name not in exclude_fields:
+                    # This is the field for the feature we want to paste to.
+                    paste_field_idx = layer.fields().indexOf(field_name)
+                    if paste_field_idx:
+                        if row[field_name] == '':
+                            layer.changeAttributeValue(paste_feature.id(), paste_field_idx, None)
+                        else:
+                            layer.changeAttributeValue(paste_feature.id(), paste_field_idx, row[field_name])
+                    else:
+                        self.showBarMessage('Could not find field, something went wrong, please check manually for partially copied attributes.', Qgis.Critical)
+                        return
+
+        self.iface.messageBar().pushMessage("Success", "Attributes has been pasted.", level=Qgis.Info, duration=5)
 
     def tryGetFeaturesGeomsFromClipBoard(self):
         cb = QApplication.clipboard()
