@@ -453,6 +453,8 @@ class Start:
                     # This is the field for the feature we want to paste to.
                     paste_field_idx = layer.fields().indexOf(field_name)
                     if paste_field_idx:
+                        # NULL fields are read as empty strings, we decided to set everything to 'None' on paste,
+                        # even empty strings, since we don't really use empty strings for anything.
                         if row[field_name] == '':
                             layer.changeAttributeValue(paste_feature.id(), paste_field_idx, None)
                         else:
