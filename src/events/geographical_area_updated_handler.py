@@ -43,4 +43,4 @@ class GeographicalAreaUpdatedHandler:
         return self.iface.mapCanvas().extent().intersects(extent)
 
     def zoom_close_enough(self):
-       return self.iface.mapCanvas().scale() < 3000
+       return self.iface.mapCanvas().scale() < 6000
