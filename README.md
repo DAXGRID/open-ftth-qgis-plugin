@@ -13,7 +13,7 @@ pip install pyqt5
 ## To update icons
 
 ```sh
-pyrcc5 -o resources.py resources/resources.qrc
+pyrcc5 -o resources.py ./src/resources/resources.qrc
 ```
 
 ## Install
