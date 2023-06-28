@@ -72,12 +72,18 @@ class Start:
         self.paste_attributes_action.setCheckable(False)
         self.paste_attributes_action.triggered.connect(self.pasteAttributes)
 
+        reload_layers = ":/plugins/open_ftth/refresh.svg"
+        self.reload_layers_action = QAction(QtGui.QIcon(reload_layers), "Reload layers", self.iface.mainWindow())
+        self.reload_layers_action.setCheckable(False)
+        self.reload_layers_action.triggered.connect(self.reloadLayers)
+
         self.iface.addPluginToMenu("&OPEN FTTH", self.select_action)
         self.iface.addToolBarIcon(self.autosave_action)
         self.iface.addToolBarIcon(self.select_action)
         self.iface.addToolBarIcon(self.web_browser_action)
         self.iface.addToolBarIcon(self.paste_geometry_action);
         self.iface.addToolBarIcon(self.paste_attributes_action);
+        self.iface.addToolBarIcon(self.reload_layers_action);
 
         self.identify_tool = IdentifySelect(self.iface.mapCanvas())
         self.identify_tool.identified.connect(self.onIdentified)
@@ -464,6 +470,23 @@ class Start:
                         return
 
         self.iface.messageBar().pushMessage("Success", "Attributes has been pasted.", level=Qgis.Info, duration=5)
+
+    def reloadLayers(self):
+        segmentLayers = QgsProject.instance().mapLayersByName(self.application_settings.get_layers_route_segment_name())
+        nodeLayers = QgsProject.instance().mapLayersByName(self.application_settings.get_layers_route_node_name())
+
+        # In case that the layers are not loaded for the current project.
+        if len(segmentLayers) != 1 or len(nodeLayers) != 1:
+            self.showBarMessage("Could not find the route node or route segment layer.", Qgis.Warning)
+            return
+
+        try:
+            segmentLayers[0].reload()
+            nodeLayers[0].reload()
+            self.iface.messageBar().pushMessage("Success", "The layers are now reloaded.", level=Qgis.Info, duration=3)
+        except TypeError as err:
+            QgsMessageLog.logMessage(err, self.name, Qgis.Critical)
+            self.iface.messageBar().pushMessage("Error", "Could not reload layers, something went wrong.", level=Qgis.Critical, duration=10)
 
     def tryGetFeaturesGeomsFromClipBoard(self):
         cb = QApplication.clipboard()
