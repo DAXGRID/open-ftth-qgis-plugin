@@ -1,0 +1,10 @@
+{
+  "EN": {
+    "ERROR": "Error",
+    "DEFAULT_ERROR": "Invalid operation, had to either delete or rollback the changes."
+  },
+  "DK": {
+    "ERROR": "Fejl",
+    "DEFAULT_ERROR": "Ugyldig handling, vi var nødt til at slette eller rulle tilbage ændringerne."
+  }
+}

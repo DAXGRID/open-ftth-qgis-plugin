@@ -1,19 +1,21 @@
 from qgis.core import QgsProject
 from qgis.core import Qgis
 from ..application_settings import ApplicationSettings
+from ..translation.translation import Translation
 
 class UserErrorOccurredHandler:
     def __init__(self, iface):
         self.iface = iface
         self.settings = ApplicationSettings()
+        self.translation = Translation()
 
     def handle(self, message):
         if message.username != self.settings.get_user_name_suffix():
             return
 
         self.iface.messageBar().pushMessage(
-            "Error",
-            message.errorCode,
+            self.translation.translate("ERROR"),
+            self.translation.translate(message.errorCode),
             level=Qgis.Critical)
 
         # Reload RouteSegment and RouteNode layers after so no artifacts are left behind from rollback or delete.
