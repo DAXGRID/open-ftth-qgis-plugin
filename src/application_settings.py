@@ -34,3 +34,9 @@ class ApplicationSettings:
 
     def get_user_name_suffix(self):
         return getpass.getuser().lower() + self.configuration.get('user', 'suffix')
+
+    def get_translation_language(self):
+        return self.configuration.get(
+            'global',
+            'language',
+            fallback='EN').upper()
