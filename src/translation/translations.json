@@ -1,0 +1,17 @@
+{
+  "EN": {
+    "COULD_NOT_RELOAD_LAYERS": "Could not reload layers, something went wrong doing refresh after user error occurred.",
+    "INVALID_OPERATION": "Invalid operation",
+    "ERROR": "Error",
+    "DEFAULT_ERROR": "Invalid operation, had to either delete or rollback the changes.",
+    "LINESTRING_IS_INVALID": "The route segment is invalid."
+  },
+  "DK": {
+    "CANNOT_FIND_DEFAULT_LAYERS": "",
+    "COULD_NOT_RELOAD_LAYERS": "Kunne ikke genindlæse lagene, noget gik galt under opdateringen, efter brugerfejlen opstod.",
+    "INVALID_OPERATION": "Ugyldig handling",
+    "ERROR": "Fejl",
+    "DEFAULT_ERROR": "Ugyldig handling, vi var nødt til at slette eller rulle tilbage ændringerne.",
+    "LINESTRING_IS_INVALID": "Den angivne tracé linje er ugyldig."
+  }
+}
