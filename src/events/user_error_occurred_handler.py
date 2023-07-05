@@ -14,9 +14,9 @@ class UserErrorOccurredHandler:
             return
 
         self.iface.messageBar().pushMessage(
-            self.translation.translate("ERROR"),
+            self.translation.translate("INVALID_OPERATION"),
             self.translation.translate(message.errorCode),
-            level=Qgis.Critical)
+            level=Qgis.Warning)
 
         # Reload RouteSegment and RouteNode layers after so no artifacts are left behind from rollback or delete.
         segmentLayers = QgsProject.instance().mapLayersByName(self.settings.get_layers_route_segment_name())
@@ -36,6 +36,6 @@ class UserErrorOccurredHandler:
         except TypeError as err:
             QgsMessageLog.logMessage(err, self.name, Qgis.Critical)
             self.iface.messageBar().pushMessage(
-                "Error",
-                "Could not reload layers, something went wrong doing refresh after user error occurred.",
+                self.translation.translate("ERROR"),
+                self.translation.translate("COULD_NOT_RELOAD_LAYERS"),
                 level=Qgis.Critical)
