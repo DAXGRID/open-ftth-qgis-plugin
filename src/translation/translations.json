@@ -7,7 +7,6 @@
     "LINESTRING_IS_INVALID": "The route segment is invalid."
   },
   "DK": {
-    "CANNOT_FIND_DEFAULT_LAYERS": "",
     "COULD_NOT_RELOAD_LAYERS": "Kunne ikke genindlæse lagene, noget gik galt under opdateringen, efter brugerfejlen opstod.",
     "INVALID_OPERATION": "Ugyldig handling",
     "ERROR": "Fejl",
