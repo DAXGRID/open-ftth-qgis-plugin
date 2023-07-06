@@ -4,13 +4,25 @@
     "INVALID_OPERATION": "Invalid operation",
     "ERROR": "Error",
     "DEFAULT_ERROR": "Invalid operation, had to either delete or rollback the changes.",
-    "LINESTRING_IS_INVALID": "The route segment is invalid."
+    "LINE_STRING_IS_INVALID": "The route segment is invalid.",
+    "LINE_STRING_IS_NOT_SIMPLE": "The route segment is not simple.",
+    "LINE_STRING_IS_CLOSED": "Route segment being closed is not allowed.",
+    "LINE_STRING_ENDS_CLOSER_TO_EACH_OTHER_THAN_TOLERANCE": "The route segment ends are closer to each other than tolerance.",
+    "LINE_STRING_ENDS_CLOSER_TO_THE_EDGE_THAN_TOLERANCE": "The route segment ends are closer the the edge than tolerance.",
+    "ROUTE_SEGMENT_INTERSECTS_WITH_MULTIPLE_START_OR_END_ROUTE_NODES": "The route segments intersects with multiple start or end nodes.",
+    "RECEIVED_INVALID_MESSAGE": "Received invalid create or update message."
   },
   "DK": {
     "COULD_NOT_RELOAD_LAYERS": "Kunne ikke genindlæse lagene, noget gik galt under opdateringen, efter brugerfejlen opstod.",
     "INVALID_OPERATION": "Ugyldig handling",
     "ERROR": "Fejl",
     "DEFAULT_ERROR": "Ugyldig handling, vi var nødt til at slette eller rulle tilbage ændringerne.",
-    "LINESTRING_IS_INVALID": "Den angivne tracé linje er ugyldig."
+    "LINE_STRING_IS_INVALID": "Den angivne tracé linje er ugyldig.",
+    "LINE_STRING_IS_NOT_SIMPLE": "Tracé linjen er ikke simpel.",
+    "LINE_STRING_IS_CLOSED": "Tracé linjen er lukket, dette er ikke tilladt.",
+    "LINE_STRING_ENDS_CLOSER_TO_EACH_OTHER_THAN_TOLERANCE": "Tracé linjens endepunkter er tættere på hinanden end tolerancen tillader.",
+    "LINE_STRING_ENDS_CLOSER_TO_THE_EDGE_THAN_TOLERANCE": "Tracé linjens slutpunkter er tættere på kanten end tolerancen tillader.",
+    "ROUTE_SEGMENT_INTERSECTS_WITH_MULTIPLE_START_OR_END_ROUTE_NODES": "Tracé linjens slutpunkter intersekter mere flere start eller slut punkter.",
+    "RECEIVED_INVALID_MESSAGE": "Modtog ugyldig oprettelses - eller opdateringsbesked."
   }
 }
