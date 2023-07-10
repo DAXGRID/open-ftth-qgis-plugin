@@ -20,7 +20,7 @@
     "COULD_NOT_RELOAD_LAYERS": "Kunne ikke genindlæse lagene, noget gik galt under opdateringen, efter brugerfejlen opstod.",
     "INVALID_OPERATION": "Ugyldig handling",
     "ERROR": "Fejl",
-    "DEFAULT_ERROR": "Ugyldig handling, vi var nødt til at slette eller rulle tilbage ændringerne.",
+    "DEFAULT_ERROR": "Ugyldig handling, vi var nødt til at rulle ændringerne tilbage.",
     "LINE_STRING_IS_INVALID": "Den angivne tracé linje er ugyldig.",
     "LINE_STRING_IS_NOT_SIMPLE": "Tracé linjen er ikke simpel.",
     "LINE_STRING_IS_CLOSED": "Tracé linjen er lukket, dette er ikke tilladt.",
