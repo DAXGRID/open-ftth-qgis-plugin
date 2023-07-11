@@ -13,9 +13,12 @@
     "RECEIVED_INVALID_MESSAGE": "Received invalid create or update message.",
     "ROUTE_NODE_INTERSECTS_WITH_ANOTHER_ROUTE_NODE": "A route node cannot intersect with another route node.",
     "ROUTE_NODE_MODIFIED_LESS_THAN_TOLERANCE": "The route node geometry was modified less than the allowed tolerance.",
-    "ROUTE_NODE_CANNOT_CHANGE_CONNECTIVITY_AND_DELETE_SAME_OPERATION": "You cannot delete a route node and change it's geometry in the same operation.",
     "ROUTE_NODE_GEOMETRY_UPDATE_NOT_ALLOWED_TO_INTERSECT_WITH_ROUTE_SEGMENT": "Route node geometry cannot be modified if it results in intersection with one or more route segments.",
-    "USER_HAS_NOT_SELECTED_A_WORK_TASK": "Please select a work task."
+    "USER_HAS_NOT_SELECTED_A_WORK_TASK": "Please select a work task.",
+    "ROUTE_NODE_INTERSECT_WITH_ROUTE_SEGMENT_CANNOT_BE_DELETED": "To delete a route node it must not intersect with any route segments.",
+    "ROUTE_NODE_CANNOT_MODIFY_GEOMETRY_AND_MARK_FOR_DELETION_IN_THE_SAME_OPERATION": "You cannot delete a route node and change it's geometry in the same operation.",
+    "CANNOT_DELETE_ROUTE_NODE_WITH_RELATED_EQUIPMENT": "You cannot delete a route node when it has related equipment.",
+    "CANNOT_DELETE_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "You cannot delete a route segment when it has related equipment."
   },
   "DK": {
     "COULD_NOT_RELOAD_LAYERS": "Kunne ikke genindlæse lagene, noget gik galt under opdateringen, efter brugerfejlen opstod.",
@@ -31,8 +34,11 @@
     "RECEIVED_INVALID_MESSAGE": "Modtog ugyldig oprettelses - eller opdateringsbesked.",
     "ROUTE_NODE_INTERSECTS_WITH_ANOTHER_ROUTE_NODE": "Et knudepunkt må ikke krydse et andet knudepunkt.",
     "ROUTE_NODE_MODIFIED_LESS_THAN_TOLERANCE": "Knudepunktets geometri blev ændret mindre end den tilladte tolerance.",
-    "ROUTE_NODE_CANNOT_CHANGE_CONNECTIVITY_AND_DELETE_SAME_OPERATION": "Du kan ikke slette et knudepunkt og ændre dens geometri i samme handling.",
     "ROUTE_NODE_GEOMETRY_UPDATE_NOT_ALLOWED_TO_INTERSECT_WITH_ROUTE_SEGMENT": "Knudepunktets geometri kan ikke ændres, hvis det resulterer i krydsning med en eller flere tracé linjer.",
-    "USER_HAS_NOT_SELECTED_A_WORK_TASK": "Vælg venligst en arbejdsopgave."
+    "USER_HAS_NOT_SELECTED_A_WORK_TASK": "Vælg venligst en arbejdsopgave.",
+    "ROUTE_NODE_INTERSECT_WITH_ROUTE_SEGMENT_CANNOT_BE_DELETED": "Du må kun slette et knudepunkt hvis knudepunktet ikke krydser nogen tracé linjer.",
+    "ROUTE_NODE_CANNOT_MODIFY_GEOMETRY_AND_MARK_FOR_DELETION_IN_THE_SAME_OPERATION": "Du kan ikke slette et knudepunkt og ændre dens geometri i samme handling.",
+    "CANNOT_DELETE_ROUTE_NODE_WITH_RELATED_EQUIPMENT": "Du kan ikke slette et knudepunkt, hvis den har relateret udstyr. Fjern udstyret, derefter kan den slettes.",
+    "CANNOT_DELETE_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "Du kan ikke slette en tracé linje, hvis den har relateret udstyr. Fjern udstyret, derefter kan den slettes."
   }
 }
