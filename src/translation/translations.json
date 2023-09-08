@@ -18,7 +18,8 @@
     "ROUTE_NODE_INTERSECT_WITH_ROUTE_SEGMENT_CANNOT_BE_DELETED": "To delete a route node it must not intersect with any route segments.",
     "ROUTE_NODE_CANNOT_MODIFY_GEOMETRY_AND_MARK_FOR_DELETION_IN_THE_SAME_OPERATION": "You cannot delete a route node and change it's geometry in the same operation.",
     "CANNOT_DELETE_ROUTE_NODE_WITH_RELATED_EQUIPMENT": "You cannot delete a route node when it has related equipment.",
-    "CANNOT_DELETE_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "You cannot delete a route segment when it has related equipment."
+    "CANNOT_DELETE_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "You cannot delete a route segment when it has related equipment.",
+    "CANNOT_CHANGE_CONNECTIVITY_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "You cannot edit the connectivity of a route segment when it has related equipment."
   },
   "DK": {
     "COULD_NOT_RELOAD_LAYERS": "Kunne ikke genindlæse lagene, noget gik galt under opdateringen, efter brugerfejlen opstod.",
@@ -39,6 +40,7 @@
     "ROUTE_NODE_INTERSECT_WITH_ROUTE_SEGMENT_CANNOT_BE_DELETED": "Du kan ikke slette en tracéknude, hvis der går en eller flere tracélinjer til/fra denne.",
     "ROUTE_NODE_CANNOT_MODIFY_GEOMETRY_AND_MARK_FOR_DELETION_IN_THE_SAME_OPERATION": "Du kan ikke slette et tracéknude og ændre dens geometri i samme handling.",
     "CANNOT_DELETE_ROUTE_NODE_WITH_RELATED_EQUIPMENT": "Du kan ikke slette et tracéknude, hvis den har relateret udstyr. Fjern udstyret, derefter kan den slettes.",
-    "CANNOT_DELETE_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "Du kan ikke slette en tracélinje, hvis den har relateret udstyr. Fjern udstyret, derefter kan den slettes."
+    "CANNOT_DELETE_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "Du kan ikke slette en tracélinje, hvis den har relateret udstyr. Fjern udstyret, derefter kan den slettes.",
+    "CANNOT_CHANGE_CONNECTIVITY_ROUTE_SEGMENT_WITH_RELATED_EQUIPMENT": "Du kan ikke frakoble en tracélinje fra tracéknuden, hvis den har relateret udstyr."
   }
 }
