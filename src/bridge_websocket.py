@@ -27,6 +27,7 @@ class BridgeWebsocket(QtCore.QThread):
             self.websocket.run_forever()
         except WebSocketException as e:
             if "socket is already opened" in str(e):
+                # We are not interested in reconnected, because it is already connected.
                 print(f"An error occurred: {e}")
             else:
                 print(f"An error occurred: {e}")
@@ -52,13 +53,14 @@ class BridgeWebsocket(QtCore.QThread):
         self.websocket.close()
 
         if self.retries >= 10:
-            print("Waiting 60 secs before trying to reconnect")
+            print("Waiting 60 secs before trying to reconnect to the desktop-bridge.")
             time.sleep(60)
             self.retries = 0
         else:
-            time.sleep(3)
+            time.sleep(1)
             self.retries += 1
 
+        print("Reconnecting to the desktop-bridge.")
         self.run()
 
     def send(self, message):
