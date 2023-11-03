@@ -23,7 +23,17 @@ class BridgeWebsocket(QtCore.QThread):
                                 on_open = lambda ws: self.onOpen(ws))
 
     def run(self):
-        self.websocket.run_forever()
+        try:
+            self.websocket.run_forever()
+        except WebSocketException as e:
+            if "socket is already opened" in str(e):
+                print(f"An error occurred: {e}")
+            else:
+                print(f"An error occurred: {e}")
+                self.reconnect()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            self.reconnect()
 
     def onOpen(self, ws):
         self.retries = 0
@@ -35,6 +45,7 @@ class BridgeWebsocket(QtCore.QThread):
         self.messageReceived.emit(message)
 
     def onError(self, ws, error):
+        print(f"An error occurred: {error}")
         self.reconnect()
 
     def reconnect(self):
