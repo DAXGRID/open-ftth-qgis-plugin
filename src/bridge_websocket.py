@@ -1,4 +1,4 @@
-from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt6.QtCore import pyqtSignal, Qt
 from qgis.PyQt import QtCore
 from .event_handler import EventHandler
 from .application_settings import ApplicationSettings

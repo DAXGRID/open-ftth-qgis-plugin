@@ -7,13 +7,13 @@ As the system is currently being developed, there is not yet a large amount of d
 ## Dependencies
 
 ```bash
-pip install pyqt5
+pip install pyqt6
 ```
 
 ## To update icons
 
 ```sh
-pyrcc5 -o resources.py ./src/resources/resources.qrc
+rcc -g python -o resources.py ./src/resources/resources.qrc
 ```
 
 ## Install

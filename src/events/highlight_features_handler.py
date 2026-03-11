@@ -1,5 +1,5 @@
 from qgis.gui import QgsHighlight
-from PyQt5.QtGui import QColor
+from PyQt6.QtGui import QColor
 from qgis.core import QgsProject, QgsFeatureRequest, QgsRectangle
 from ..application_settings import ApplicationSettings
 
