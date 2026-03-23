@@ -1,6 +1,6 @@
 from PyQt6 import QtGui
-from PyQt6.QtWidgets import QAction, QActionGroup, QWidgetAction, QApplication
-from PyQt6.QtGui import QColor
+from PyQt6.QtWidgets import QWidgetAction, QApplication
+from PyQt6.QtGui import QColor, QAction, QActionGroup
 from qgis.core import QgsProject, Qgis, QgsFeatureRequest, QgsVectorLayerUndoCommandDeleteFeature, QgsMessageLog, QgsGeometry
 from qgis.gui import QgsHighlight, QgsMessageBar
 from io import StringIO

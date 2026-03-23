@@ -13,7 +13,7 @@ class IdentifySelect(QgsMapToolIdentify):
         QgsMapToolIdentify.__init__(self, canvas)
         self.layerType = getattr(QgsMapToolIdentify, layerType)
         self.canvas = canvas
-        self.setCursor(QCursor(Qt.PointingHandCursor))
+        self.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
         self.applicationSettings = ApplicationSettings()
 
     def canvasReleaseEvent(self, mouseEvent):
